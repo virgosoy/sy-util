@@ -43,3 +43,19 @@ arrToObj - 数组转对象
 
 objToArr - 对象转数组
 
+
+
+## curry.js
+
+柯里化的函数 
+依赖 lodash-es/curry
+
+### 1.0.0.200517
+
+compose - 组合函数
+
+split - 柯里化String#split
+
+map - 柯里化Array#map
+
+includes - 柯里化Array#includes
