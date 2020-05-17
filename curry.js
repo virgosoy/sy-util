@@ -1,7 +1,7 @@
 
 /* 柯里化的函数 
     依赖 lodash-es/curry
-    @version 1.0.0.200517
+    @version 1.1.0.200517
 */
 import curry from 'https://unpkg.com/lodash-es@4.17.15/curry.js'
 
@@ -46,6 +46,15 @@ export const map = curry( (f, arr) => arr.map(f) )
  * ie 不支持、Edge 14、Firefox 43、Chrome 47、Safari 9
  */
 export const includes = curry( (item, arr) => arr.includes(item) )
+
+/**
+ * 检查数组是否全部包含指定的数组元素\
+ * includesAll :: Array -> Array -> Boolean
+ * @param {Array} findArr 查询的数组
+ * @param {Array} arr 被查询的数组
+ * @returns {Boolean} 如果包含全部，返回true，否则返回false
+ */
+export const includesAll = curry((findArr,arr) => findArr.every(fv => arr.includes(fv)))
 
 // /**
 //  *  模拟switch case

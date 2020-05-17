@@ -1,5 +1,5 @@
 /* input 字符串校验类 
-    @version: 1.0.0.200516
+    @version 1.1.0.200517
 */
 
 /**
@@ -62,6 +62,46 @@ export function isDateTime (value) {
     var minute = Number(result[5])
     var second = Number(result[6])
     if (!(hour < 24 && minute < 60 && second < 60)) {
+        return false
+    }
+    return true
+}
+
+/**
+ * 校验日期(仅日期)
+ * @param {String} value
+ */
+export function isDate (value) {
+    // 参考：https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#valid-date-string
+
+    // var result = /^(\d{4,})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/.exec(value)
+    var result = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+
+    if (!result) {
+        return false
+    }
+    var year = Number(result[1])
+    var month = Number(result[2])
+    if (!(year > 0 && month >= 1 && month <= 12)) {
+        return false
+    }
+    var day = Number(result[3])
+
+    var maxDay
+    if ([1, 3, 5, 7, 8, 10, 12].some(v => month === v)) {
+        maxDay = 31
+    } else if ([4, 6, 9, 11].some(v => month === v)) {
+        maxDay = 30
+    } else if (month === 2) {
+        if (year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0)) {
+            maxDay = 29
+        } else {
+            maxDay = 28
+        }
+    } else {
+        return false
+    }
+    if (!(day > 0 && day <= maxDay)) {
         return false
     }
     return true
