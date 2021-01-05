@@ -55,7 +55,7 @@ isNumber - 数字
 
 类型转换
 
-esmodule类型，使用原生js
+esmodule类型，使用原生js，需ES2017及以上
 
 ### 所有方法
 
@@ -65,6 +65,9 @@ objToArr - 对象转数组
 
 flatObj - 将嵌套对象平铺，用"."隔开
 
+### 1.1.2.210105
+
+修正bug：objToArr异常
 ### 1.1.1.210105
 
 修正bug：flatObj不支持null、objToArr异常

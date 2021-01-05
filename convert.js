@@ -1,6 +1,7 @@
-
+// @ts-check
 /* 类型转换 
-    @version 1.1.1.210105
+    依赖 ES2017
+    @version 1.1.2.210105
 */
 
 /**
@@ -27,17 +28,17 @@ export function arrToObj(arr,key){
  * @param {Object} obj 要转换的对象
  * @param {String} key 指定对象的key转为数组元素的key的什么名称
  * @returns {Array}
- * @version 1.1.1.210105
+ * @version 1.1.2.210105
  */
 export function objToArr(obj,key){
-    return Object.entitys(obj).map(([k,v])=>({[key]:k,...v}))
+    return Object.entries(obj).map(([k,v])=>({[key]:k,...v}))
 }
 
 /**
  * 判断是否有子元素并处理
- * @param {*} obj 
- * @param {*} result 
- * @param {string} fatherKey 
+ * @param {*} obj 要解析的数据
+ * @param {Object} result 结果
+ * @param {string | undefined} fatherKey 可选，要解析的数据的key，如果没有key可不传递或传递undefined
  * @version 1.1.1.210105
  */
 function _hasChildren(obj,result,fatherKey = undefined){
@@ -54,7 +55,6 @@ function _hasChildren(obj,result,fatherKey = undefined){
 /**
  * 将嵌套对象平铺，用"."隔开
  * @param {Object} obj
- * @version 1.1.1.210105
  */
 export const flatObj = function (obj) {
     var result = {}
