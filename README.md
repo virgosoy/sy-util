@@ -65,6 +65,10 @@ objToArr - 对象转数组
 
 flatObj - 将嵌套对象平铺，用"."隔开
 
+### 1.1.1.210105
+
+修正bug：flatObj不支持null、objToArr异常
+
 ### 1.1.0.210105
 
 新增方法：

@@ -1,6 +1,6 @@
 
 /* 类型转换 
-    @version 1.1.0.210105
+    @version 1.1.1.210105
 */
 
 /**
@@ -27,16 +27,24 @@ export function arrToObj(arr,key){
  * @param {Object} obj 要转换的对象
  * @param {String} key 指定对象的key转为数组元素的key的什么名称
  * @returns {Array}
+ * @version 1.1.1.210105
  */
 export function objToArr(obj,key){
-    return Objects.entitys(obj).map(([k,v])=>({[key]:k,...v}))
+    return Object.entitys(obj).map(([k,v])=>({[key]:k,...v}))
 }
 
-function hasChildren(obj,result,fatherKey = undefined){
-    if(typeof obj === "object"){
+/**
+ * 判断是否有子元素并处理
+ * @param {*} obj 
+ * @param {*} result 
+ * @param {string} fatherKey 
+ * @version 1.1.1.210105
+ */
+function _hasChildren(obj,result,fatherKey = undefined){
+    if(typeof obj === "object" && obj !== null){
         var keys = Object.keys(obj)
         keys.forEach(key=>{
-            hasChildren(obj[key],result,fatherKey ? fatherKey+"."+key : key)
+            _hasChildren(obj[key],result,fatherKey ? fatherKey+"."+key : key)
         })
     }else {
         result[fatherKey] = obj
@@ -45,11 +53,11 @@ function hasChildren(obj,result,fatherKey = undefined){
 
 /**
  * 将嵌套对象平铺，用"."隔开
- * @param obj
- * @version 0.1.1.190911
+ * @param {Object} obj
+ * @version 1.1.1.210105
  */
 export const flatObj = function (obj) {
     var result = {}
-    hasChildren(obj,result)
+    _hasChildren(obj,result)
     return result;
 }
