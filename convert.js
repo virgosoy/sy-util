@@ -1,6 +1,6 @@
 
 /* 类型转换 
-    @version 1.0.1.200516
+    @version 1.1.0.210105
 */
 
 /**
@@ -30,4 +30,26 @@ export function arrToObj(arr,key){
  */
 export function objToArr(obj,key){
     return Objects.entitys(obj).map(([k,v])=>({[key]:k,...v}))
+}
+
+function hasChildren(obj,result,fatherKey = undefined){
+    if(typeof obj === "object"){
+        var keys = Object.keys(obj)
+        keys.forEach(key=>{
+            hasChildren(obj[key],result,fatherKey ? fatherKey+"."+key : key)
+        })
+    }else {
+        result[fatherKey] = obj
+    }
+}
+
+/**
+ * 将嵌套对象平铺，用"."隔开
+ * @param obj
+ * @version 0.1.1.190911
+ */
+export const flatObj = function (obj) {
+    var result = {}
+    hasChildren(obj,result)
+    return result;
 }
