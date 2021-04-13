@@ -1,5 +1,11 @@
 /* input 字符串校验类 
-    @version 1.1.0.200517
+    @version 1.3.0.200911
+
+    1.3.0.200911
+        增加 isInteger
+    1.2.0.200614
+        增加 isEmptyTrim
+	1.1.0.200517
 */
 
 /**
@@ -19,6 +25,18 @@ export function isEmail (s) {
  */
 export function isEmpty (s) {
     return s === undefined || s === null || s === ''
+}
+
+/**
+ * 是否为空（去除空格）
+ * @export
+ * @param {*} s
+ * @returns
+ * @since 1.2.0
+ */
+export function isEmptyTrim (s) {
+    return s === undefined || s === null || 
+        (typeof s === 'string' && s.trim() === '')
 }
 
 /**
@@ -139,4 +157,14 @@ export function isURL (s) {
  */
 export function isNumber (s) {
     return /^-?[0-9]+\.?[0-9]*$/.test(s)
+}
+
+/**
+ * 整数(带负号也可)
+ * @export
+ * @param {*} s
+ * @returns
+ */
+export function isInteger (s) {
+    return /^-?[0-9]+$/.test(s)
 }

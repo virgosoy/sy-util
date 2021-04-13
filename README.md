@@ -27,6 +27,18 @@ isURL - URL地址
 
 isNumber - 数字
 
+isEmptyTrim - 为空（去除空格后校验）
+
+isInteger - 整数(带负号也可)
+
+### 1.3.0.200911
+
+feat: 增加 isInteger
+
+### 1.2.0.200614
+
+feat: 增加 isEmptyTrim
+
 ### 1.1.0.200517
 
 A：isDate - 是否为日期
