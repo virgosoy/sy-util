@@ -137,6 +137,16 @@ map - 柯里化Array#map
 
 includes - 柯里化Array#includes
 
+## clipboard.js 2
+
+依赖xlsx、./basetype.js
+
+###### 2.1.0.210422
+
+fix: 获取日期格式有误，修改为以excel显示值为准
+
+
+
 ## clipboard.js
 
 剪贴板+excel，esmodule
