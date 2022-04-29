@@ -34,7 +34,7 @@ export function toTreeKeepItem(source : any[], {idKey = 'id', pidKey = 'pid', ch
  * @returns 树形结构，子为 children，原有数据的元素一样会多个 children。
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function toTree(data : any[], {idKey = 'id', pidKey = 'pid', childrenKey = 'children'} = {idKey: 'id', pidKey: 'pid', childrenKey : 'children'}) {
+export function toTree(data : any[], {idKey = 'id', pidKey = 'pid', childrenKey = 'children'} = {idKey: 'id', pidKey: 'pid', childrenKey : 'children'}) : any[]{
   const result : unknown[] = []
   if(!Array.isArray(data)) {
       return result
