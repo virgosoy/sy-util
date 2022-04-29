@@ -61,11 +61,19 @@ isURL - URL地址
 
 isNumber - 数字
 
+## convert.ts
 
+类型转换 v2 版本，使用 ts
+
+### 2.0.0.220428
+
+toTree - 列表转树形结构
+
+toTreeKeepItem - 列表转树形结构
 
 ## convert.js
 
-类型转换
+类型转换 v1
 
 esmodule类型，使用原生js，需ES2017及以上
 
