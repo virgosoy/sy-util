@@ -182,3 +182,9 @@ pasteHandler - 解析事件对象并进行处理
 isExcel - 根据剪贴板判断是否是excel
 
 getExcelData - 根据剪贴板获取excel数据（二维数组）
+
+## ui.ts quasar
+
+UI 工具类，封装一些常用的 UI
+
+一般是贴合实际项目的，可能并不通用
