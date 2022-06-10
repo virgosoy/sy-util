@@ -61,6 +61,22 @@ isURL - URL地址
 
 isNumber - 数字
 
+## StringUtils.ts
+
+字符串工具类
+
+### 2.0.0.220610
+
+复制自 validate.js v1.3.0.200911
+
+#### Added
+
+hasLength、hasText 方法
+
+#### Deprecated
+
+isEmpty、isEmptyTrim 方法
+
 ## convert.ts
 
 类型转换 v2 版本，使用 ts
