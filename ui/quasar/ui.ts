@@ -26,10 +26,39 @@ export function notifyOfError(message: string) {
   })
 }
 
+export function notifyOfInfo(message: string) {
+  return Notify.create({
+    type: 'info',
+    position: 'top',
+    message,
+    progress: true,
+    actions: [{ icon: 'close', color: 'white' }],
+  })
+}
+
 export function confirm(message: string) {
   return Dialog.create({
     title: 'Confirm',
     message,
+    cancel: true,
+  })
+}
+
+/**
+ * 提示确认，看起来是个 prompt，但实际效果等同 confirm，就是为了输入指定文本后才能确认。避免误操作。
+ * @param message 提示的消息
+ * @param confirmString 确认文本，输入此文本才能确认。
+ * @returns
+ */
+export function promptConfirm(message: string, confirmString: string) {
+  return Dialog.create({
+    title: 'Confirm',
+    message,
+    prompt: {
+      model: '',
+      isValid: val => val === confirmString,
+      type: 'text',
+    },
     cancel: true,
   })
 }
@@ -180,7 +209,9 @@ async function _tryDo<P extends unknown[], R>(
 const UI = {
   notifyOfSuccess,
   notifyOfError,
+  notifyOfInfo,
   confirm,
+  promptConfirm,
   doSomething,
   tryDo,
 }
