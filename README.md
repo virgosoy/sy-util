@@ -81,6 +81,13 @@ isEmpty、isEmptyTrim 方法
 
 类型转换 v2 版本，使用 ts
 
+### 2.1.0.220630
+
+#### Added
+
+- numberToABC - 数字转 ABC，类似 excel 的列头，A=1
+- numberFromABC - ABC 转数字，ABC 类似 excel 的列头，A=1
+
 ### 2.0.0.220428
 
 toTree - 列表转树形结构
