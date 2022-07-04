@@ -168,6 +168,12 @@ map - 柯里化Array#map
 
 includes - 柯里化Array#includes
 
+## ExcelUtils.ts
+
+### 3.0.0.220704
+
+复制修改于 clipboard.js v2.1.0.210422（剪贴板相关工具），去掉外部依赖，自己实现解析
+
 ## clipboard.js 2
 
 依赖xlsx、./basetype.js
