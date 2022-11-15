@@ -222,6 +222,10 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+### 2.1.0.221115
+
+feat: 增加方法 cartesianProductRecordArray（Record数组的笛卡尔积）
+
 ### 2.0.0.220701
 
 从 basetype.js（基础数据类型工具类）修改，改为 ts

@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.0.0.220701  从 basetype.js（基础数据类型工具类）修改，改为 ts
+ * @version 2.1.0.221115  增加方法 cartesianProductRecordArray（Record数组的笛卡尔积）
  * @changeLog
+ *      2.1.0.221115  增加方法 cartesianProductRecordArray（Record数组的笛卡尔积）
  *      2.0.0.220701        从 basetype.js（基础数据类型工具类） 修改，改为 ts
  *      0.0.3-alpha.211018  增加方法 nullIf
  *      0.0.2-alpha.210917  增加方法 isEmptyAsString
@@ -87,6 +88,36 @@ export const nullIf = (obj: unknown, expect: unknown) =>
  */
 export function isEmptyAsString(obj: unknown) {
   return isUndefined(obj) || isNull(obj) || obj === ''
+}
+
+/**
+ * Record数组的笛卡尔积
+ * @param arr 多个 Record 数组
+ * @returns 笛卡尔积，不会改变原数组（即浅克隆）。如果后面的数组元素的key和之前一样，那么后面的会覆盖前面的。
+ */
+export function cartesianProductRecordArray(
+  ...arr: Record<string | number | symbol, unknown>[][]
+) {
+  // 参数校验
+  if (arr.length === 0) {
+    return []
+  }
+
+  const source = arr[0]
+  const [, ...targets] = arr
+  let result = source.map(v => v)
+
+  targets.forEach(target => {
+    result = result
+      .map(
+        si =>
+          target.map(
+            ti => Object.assign({}, si, ti) // {}
+          ) // {}[]
+      ) // {}[][]
+      .flat(1) // {}[]
+  })
+  return result
 }
 
 /**
