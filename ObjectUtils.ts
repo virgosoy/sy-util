@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.2.0.221228 将 soy-functional.js 所有方法复制修改到此处。
+ * @version 2.3.0.221228 增加方法 diffAdd 比较获取目标数组比原数组多的元素
  * @changeLog
+ *          2.3.0.221228 增加方法 diffAdd 比较获取目标数组比原数组多的元素
  *          2.2.0.221228 将 soy-functional.js 所有方法复制修改到此处。
  *          2.1.0.221115  增加方法 cartesianProductRecordArray（Record数组的笛卡尔积）
  *          2.0.0.220701        从 basetype.js（基础数据类型工具类） 修改，改为 ts
@@ -83,6 +84,17 @@ export function comparator<T>(keyOrFn: ((item: T) => number) | string, sort: 'as
   }
 }
 
+/**
+ * 比较获取目标数组比原数组多的元素
+ * @param source 原数组
+ * @param target 目标数组
+ * @returns 多的元素部分的数组
+ * @version 2.3.0.221228
+ * @since 2.3.0.221228
+ */
+export function diffAdd<T>(source: T[], target: T[]) {
+  return target.filter(v => !source.includes(v))
+}
 // #endregion
 
 // #region 对象数组相关
@@ -156,7 +168,7 @@ export function cartesianProductRecordArray(
 
 // #endregion
 
-// #region 对象判断
+// #region 变量判断
 
 /**
  * 检查对象是否为 undefined
