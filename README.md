@@ -222,6 +222,12 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+### 2.2.0.221228
+
+将 soy-functional.js 所有方法复制修改到此处。
+
+即新增了方法：groupBy、distinct、comparator
+
 ### 2.1.0.221115
 
 feat: 增加方法 cartesianProductRecordArray（Record数组的笛卡尔积）
