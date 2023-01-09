@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.3.0.221228 增加方法 diffAdd 比较获取目标数组比原数组多的元素
+ * @version 2.3.1.221228 fix: distinct 返回类型不对
  * @changeLog
+ *          2.3.1.221228 fix: distinct 返回类型不对
  *          2.3.0.221228 增加方法 diffAdd 比较获取目标数组比原数组多的元素
  *          2.2.0.221228 将 soy-functional.js 所有方法复制修改到此处。
  *          2.1.0.221115  增加方法 cartesianProductRecordArray（Record数组的笛卡尔积）
@@ -46,10 +47,10 @@ export function groupBy<T>(array: T[], fn: (o: T) => unknown): Record<string, T[
 /**
  * 数组去重，不改变原数组
  * @param {Array} arr
- * @version 2.2.0.221228 从 soy-functional.js 复制修改
- * @since 2.2.0.221228
+ * @version 2.3.1.221228
+ * @since 2.2.0.221228 从 soy-functional.js 复制修改、2.3.1.221228 修改参数类型
  */
-export function distinct(arr: unknown[]) {
+export function distinct<T>(arr: T[]) {
   return [...new Set(arr)]
 }
 
