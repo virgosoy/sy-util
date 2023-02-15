@@ -222,6 +222,10 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+### 2.4.0.230215
+
+feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
+
 #### 2.3.1.221228
 
 fix: distinct 返回类型不对

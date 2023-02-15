@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.3.1.221228 fix: distinct 返回类型不对
+ * @version 2.4.0.230215 feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
  * @changeLog
+ *          2.4.0.230215 feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
  *          2.3.1.221228 fix: distinct 返回类型不对
  *          2.3.0.221228 增加方法 diffAdd 比较获取目标数组比原数组多的元素
  *          2.2.0.221228 将 soy-functional.js 所有方法复制修改到此处。
@@ -165,6 +166,66 @@ export function cartesianProductRecordArray(
       .flat(1) // {}[]
   })
   return result
+}
+
+/**
+ * 移动数组元素，通过排序号确定顺序 \
+ * 会修改排序号，而不会修改数组实际顺序 \
+ * 注意：如果排序号有重复，那么有可能会排序失败
+ * @param arr 数组
+ * @param orderKey 排序号的 key 名称
+ * @param sourceIndex 要移动的元素索引
+ * @param targetIndex 移动到的目标元素索引（即移动后元素新位置在移动前的哪个元素上）
+ * @returns 排序号有变动的元素数组
+ * @since 2.4.0.230215
+ */
+export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderNumber'>
+    (arr: {[K in OrderNumberKey]: number}[], orderKey: OrderNumberKey, sourceIndex: number, targetIndex: number): {[K in OrderNumberKey]: number}[] {
+
+  const sourceOrderNumber = arr[sourceIndex][orderKey]
+  const targetOrderNumber = arr[targetIndex][orderKey]
+
+  /** 方向，向后移动是正，向前移动是负，不动是0 */
+  const dest = targetOrderNumber - sourceOrderNumber
+
+  if(dest === 0){
+    return []
+  }
+
+  const minOrderNumber = Math.min(sourceOrderNumber, targetOrderNumber)
+  const maxOrderNumber = Math.max(sourceOrderNumber, targetOrderNumber)
+
+  const listOrderByAsc = arr
+    .filter(o => isInRange(o[orderKey], minOrderNumber, maxOrderNumber))
+    .sort(comparator(orderKey, dest > 0 ? 'asc' : 'desc'))
+
+  // 修改数组 orderNumber
+  // 可以看成排队：
+  // 第一个元素出列
+  // 把前一个元素的 orderNumber 给后一个元素，也就是后一个元素占前一个元素的位置。升序的话，就是向前排，倒序的话，就是向后排。
+  // 第一个元素回到空位。
+  const firstItem = listOrderByAsc.shift()!
+  let nextOrderNumber = firstItem[orderKey]
+  listOrderByAsc.forEach(o => {
+    const temp = o[orderKey]
+    o[orderKey] = nextOrderNumber
+    nextOrderNumber = temp
+  })
+  firstItem[orderKey] = nextOrderNumber
+  return listOrderByAsc
+
+  // -----------------------------------------------------------
+
+  /**
+   * 判断数字是否在闭区间范围内
+   * @param value 要判断的值
+   * @param min 最小值
+   * @param max 最大值
+   * @returns -
+   */
+  function isInRange(value: number, min: number, max: number): boolean{
+    return value >= min && value <= max
+  }
 }
 
 // #endregion
