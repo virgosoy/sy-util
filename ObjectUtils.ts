@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.4.0.230215 feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
+ * @version 2.4.1.230216 fix: moveArrayItemOrderNumber 返回时缺少元素
  * @changeLog
+ *          2.4.1.230216 fix: moveArrayItemOrderNumber 返回时缺少元素
  *          2.4.0.230215 feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
  *          2.3.1.221228 fix: distinct 返回类型不对
  *          2.3.0.221228 增加方法 diffAdd 比较获取目标数组比原数组多的元素
@@ -177,11 +178,13 @@ export function cartesianProductRecordArray(
  * @param sourceIndex 要移动的元素索引
  * @param targetIndex 移动到的目标元素索引（即移动后元素新位置在移动前的哪个元素上）
  * @returns 排序号有变动的元素数组
+ * @version 2.4.1.230216 change: 2.4.0.230215
  * @since 2.4.0.230215
  */
 export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderNumber'>
     (arr: {[K in OrderNumberKey]: number}[], orderKey: OrderNumberKey, sourceIndex: number, targetIndex: number): {[K in OrderNumberKey]: number}[] {
 
+  debugger
   const sourceOrderNumber = arr[sourceIndex][orderKey]
   const targetOrderNumber = arr[targetIndex][orderKey]
 
@@ -212,6 +215,9 @@ export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderN
     nextOrderNumber = temp
   })
   firstItem[orderKey] = nextOrderNumber
+
+  // 插入回去，让此列表表示为有修改的元素，以便返回出去。
+  listOrderByAsc.unshift(firstItem)
   return listOrderByAsc
 
   // -----------------------------------------------------------
