@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.4.1.230216 fix: moveArrayItemOrderNumber 返回时缺少元素
+ * @version 2.5.0.230223 feat: comparatorAll 对多个字段生成比较器、comparator 中的类型细化
  * @changeLog
+ *          2.5.0.230223 feat: comparatorAll 对多个字段生成比较器、comparator 中的类型细化
  *          2.4.1.230216 fix: moveArrayItemOrderNumber 返回时缺少元素
  *          2.4.0.230215 feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
  *          2.3.1.221228 fix: distinct 返回类型不对
@@ -57,6 +58,14 @@ export function distinct<T>(arr: T[]) {
 }
 
 /**
+ * 排序 key 或函数
+ */
+type SortKeyOrFn<T> = ((item: T) => number) | keyof T
+/**
+ * 排序
+ */
+type Sort = 'asc' | 'desc'
+/**
  * 比较器
  *
  * demo: \
@@ -66,25 +75,49 @@ export function distinct<T>(arr: T[]) {
  *      如果是key字符串，那么直接取比较对象的key对应值做比较
  * @param sort 可选，排序顺序，默认：asc-升序、desc-降序
  * @returns {function(*, *): number} 一个比较器，用于Array.prototype.sort()
- * @version 2.2.0.221228 从 soy-functional.js 复制修改
+ * @version 2.5.0.230223 类型更加细化、2.2.0.221228 从 soy-functional.js 复制修改
  * @since 2.2.0.221228
  */
-export function comparator<T>(keyOrFn: ((item: T) => number) | string, sort: 'asc' | 'desc' = 'asc'): (a: any, b: any) => number {
+export function comparator<T>(keyOrFn: SortKeyOrFn<T>, sort: Sort = 'asc'): (a: T, b: T) => number {
   if (typeof (keyOrFn) === 'function') {
     const fn = keyOrFn
     if (sort === 'asc') {
-      return (a: T, b: T) => fn(a) - fn(b)
+      return (a, b) => fn(a) - fn(b)
     } else {
-      return (a: T, b: T) => fn(b) - fn(a)
+      return (a, b) => fn(b) - fn(a)
     }
   } else {
     const key = keyOrFn
     if (sort === 'asc') {
-      return (a, b) => a[key] - b[key]
+      return (a, b) => <any> a[key] - <any> b[key]
     } else {
-      return (a, b) => b[key] - a[key]
+      return (a, b) => <any> b[key] - <any> a[key]
     }
   }
+}
+
+/**
+ * 比较器，可以对多个字段进行排序
+ * @param confs 配置数组，元素可以是如下格式：
+ *        - key
+ *        - fn(item)
+ *        - [key, sort]
+ *        - [fn(item), sort]
+ *        
+ *        说明：
+ *        - key - 字符串：那么直接取比较对象的key对应值做比较
+ *        - fn(item) - 回调函数的参数是比较的对象，回调函数对对象做处理。
+ *        - sort - 排序顺序，默认：asc-升序、desc-降序
+ * @returns 一个比较器，用于Array.prototype.sort()
+ * @example
+ * // 对 time 进行升序后，id 进行降序
+ * arr.sort(comparatorAll((item) => new Date(item.time), ['id','desc']))
+ * @version 2.5.0.230223
+ * @since 2.5.0.230223
+ */
+export function comparatorAll<T>( ...confs: ([SortKeyOrFn<T>, Sort] | SortKeyOrFn<T>)[]): (a: T, b: T) => number {
+  const params = confs.map<[SortKeyOrFn<T>, Sort]>(conf => !Array.isArray(conf) ? [conf, 'asc' as Sort] : conf)
+  return (a, b) => params.reduce((r, param) => r || comparator(...param)(a,b),0)
 }
 
 /**

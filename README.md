@@ -222,6 +222,16 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+
+
+### 2.5.0.230223
+
+feat: comparatorAll 对多个字段生成比较器、comparator 中的类型细化
+
+#### 2.4.1.230216
+
+fix: moveArrayItemOrderNumber 返回时缺少元素
+
 ### 2.4.0.230215
 
 feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
