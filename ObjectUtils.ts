@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.5.0.230223 feat: comparatorAll 对多个字段生成比较器、comparator 中的类型细化
+ * @version 2.6.0.230505 feat: moveArrayByIndex 移动数组元素，会修改原数组，moveArrayById 根据id移动数组元素，会修改原数组
  * @changeLog
+ *          2.6.0.230505 feat: moveArrayByIndex 移动数组元素，会修改原数组，moveArrayById 根据id移动数组元素，会修改原数组
  *          2.5.0.230223 feat: comparatorAll 对多个字段生成比较器、comparator 中的类型细化
  *          2.4.1.230216 fix: moveArrayItemOrderNumber 返回时缺少元素
  *          2.4.0.230215 feat: moveArrayItemOrderNumber 移动数组元素，通过排序号确定顺序
@@ -217,7 +218,6 @@ export function cartesianProductRecordArray(
 export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderNumber'>
     (arr: {[K in OrderNumberKey]: number}[], orderKey: OrderNumberKey, sourceIndex: number, targetIndex: number): {[K in OrderNumberKey]: number}[] {
 
-  debugger
   const sourceOrderNumber = arr[sourceIndex][orderKey]
   const targetOrderNumber = arr[targetIndex][orderKey]
 
@@ -265,6 +265,40 @@ export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderN
   function isInRange(value: number, min: number, max: number): boolean{
     return value >= min && value <= max
   }
+}
+
+/**
+ * 移动数组元素，会修改原数组
+ * @param arr 数组
+ * @param sourceIndex 要移动的元素索引
+ * @param targetIndex 移动到的目标元素索引（元素的新索引。等同于如果目标是在移动的元素之前，那么则插入到目标元素之前。如果目标是在移动的元素之后，那么则插入到目标元素之后。）
+ * @version 2.6.0.230505
+ * @since 2.6.0.230505
+ */
+export function moveArrayByIndex<T>(arr: T[], sourceIndex: number, targetIndex: number){
+  var items = arr.splice(sourceIndex, 1)
+  arr.splice(targetIndex,0,...items)
+}
+
+/**
+ * 根据id移动数组元素，会修改原数组
+ * 
+ * 请保证 id 值唯一且存在，此方法不做校验。
+ * @param arr 数组
+ * @param idKey id 字段名
+ * @param sourceId 要移动的元素的id
+ * @param targetId 移动到的目标元素id（如果目标是在移动的元素之前，那么则插入到目标元素之前。如果目标是在移动的元素之后，那么则插入到目标元素之后。）
+ * @version 2.6.0.230505
+ * @since 2.6.0.230505
+ */
+export function moveArrayById<IdKey extends string = 'id', Id extends string | number = string | number>
+    (arr: {[K in IdKey]: Id}[], idKey: IdKey, sourceId: Id, targetId: Id) {
+  console.log('aaa', arguments)
+  
+  const sourceIndex = arr.findIndex(v => v[idKey] === sourceId)
+  const targetIndex = arr.findIndex(v => v[idKey] === targetId)
+
+  moveArrayByIndex(arr, sourceIndex, targetIndex)
 }
 
 // #endregion

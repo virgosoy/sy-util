@@ -224,6 +224,10 @@ UI 工具类，封装一些常用的 UI
 
 
 
+### 2.6.0.230505
+
+feat: moveArrayByIndex 移动数组元素，会修改原数组，moveArrayById 根据id移动数组元素，会修改原数组
+
 ### 2.5.0.230223
 
 feat: comparatorAll 对多个字段生成比较器、comparator 中的类型细化
