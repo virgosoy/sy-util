@@ -1,7 +1,9 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.6.0.230505 feat: moveArrayByIndex 移动数组元素，会修改原数组，moveArrayById 根据id移动数组元素，会修改原数组
+ * @version 2.7.0.230507 feat: throwError
  * @changeLog
+ *          2.7.0.230507 feat: throwError
+ *          2.6.1.230506 fix: 修改一些语法/类型问题
  *          2.6.0.230505 feat: moveArrayByIndex 移动数组元素，会修改原数组，moveArrayById 根据id移动数组元素，会修改原数组
  *          2.5.0.230223 feat: comparatorAll 对多个字段生成比较器、comparator 中的类型细化
  *          2.4.1.230216 fix: moveArrayItemOrderNumber 返回时缺少元素
@@ -90,8 +92,10 @@ export function comparator<T>(keyOrFn: SortKeyOrFn<T>, sort: Sort = 'asc'): (a: 
   } else {
     const key = keyOrFn
     if (sort === 'asc') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (a, b) => <any> a[key] - <any> b[key]
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (a, b) => <any> b[key] - <any> a[key]
     }
   }
@@ -240,6 +244,7 @@ export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderN
   // 第一个元素出列
   // 把前一个元素的 orderNumber 给后一个元素，也就是后一个元素占前一个元素的位置。升序的话，就是向前排，倒序的话，就是向后排。
   // 第一个元素回到空位。
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const firstItem = listOrderByAsc.shift()!
   let nextOrderNumber = firstItem[orderKey]
   listOrderByAsc.forEach(o => {
@@ -276,7 +281,7 @@ export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderN
  * @since 2.6.0.230505
  */
 export function moveArrayByIndex<T>(arr: T[], sourceIndex: number, targetIndex: number){
-  var items = arr.splice(sourceIndex, 1)
+  const items = arr.splice(sourceIndex, 1)
   arr.splice(targetIndex,0,...items)
 }
 
@@ -293,7 +298,6 @@ export function moveArrayByIndex<T>(arr: T[], sourceIndex: number, targetIndex: 
  */
 export function moveArrayById<IdKey extends string = 'id', Id extends string | number = string | number>
     (arr: {[K in IdKey]: Id}[], idKey: IdKey, sourceId: Id, targetId: Id) {
-  console.log('aaa', arguments)
   
   const sourceIndex = arr.findIndex(v => v[idKey] === sourceId)
   const targetIndex = arr.findIndex(v => v[idKey] === targetId)
@@ -342,6 +346,21 @@ export function isEmptyAsString(obj: unknown) {
 
 // #endregion
 
+// #region 异常相关
+
+/**
+ * 抛出一个异常，可以用在表达式需要的地方，解除对 throw 语句的限制 \
+ * 类似于 throw new Error(message)
+ * @param message 异常消息
+ * @example const v = undefined ?? throwError()
+ * @version 2.7.0.230507
+ * @since 2.7.0.230507
+ */
+export function throwError(message?: string): never{
+  throw new Error(message)
+}
+
+// #endregion
 /**
  * 缺省值，为了 vue3 的 prop 中区分判断无传参和传入undefined而出现。\
  * 并通过 import 解决新版本的vue（^3.2.6）报错的问题
