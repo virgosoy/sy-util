@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.7.0.230507 feat: throwError
+ * @version 2.8.0.230508 feat: 新增 give 方法，cartesianProductRecordArray 支持不定长参数中传入 undefined
  * @changeLog
+ *          2.8.0.230508 feat: 新增 give 方法，cartesianProductRecordArray 支持不定长参数中传入 undefined
  *          2.7.0.230507 feat: throwError
  *          2.6.1.230506 fix: 修改一些语法/类型问题
  *          2.6.0.230505 feat: moveArrayByIndex 移动数组元素，会修改原数组，moveArrayById 根据id移动数组元素，会修改原数组
@@ -179,19 +180,23 @@ export function find(
 
 /**
  * Record数组的笛卡尔积
- * @param arr 多个 Record 数组
+ * @param arr 变长参数，每个参数为 Record 数组 或 undefined，传入 undefined 的会被忽略（不等同于空数组）。
  * @returns 笛卡尔积，不会改变原数组（即浅克隆）。如果后面的数组元素的key和之前一样，那么后面的会覆盖前面的。
+ * @version 2.8.0.230508 支持不定长参数中传入 undefined \
+ *          2.1.0.221115 new
+ * @since 2.1.0.221115
  */
-export function cartesianProductRecordArray(
-  ...arr: Record<string | number | symbol, unknown>[][]
+export function cartesianProductRecordArray<K extends string | number | symbol, V>(
+  ...arr: (Record<K, V>[] | undefined)[]
 ) {
   // 参数校验
-  if (arr.length === 0) {
+  const realArr = arr.filter(v => v) as Record<K, V>[][]
+  if (realArr.length === 0) {
     return []
   }
 
-  const source = arr[0]
-  const [, ...targets] = arr
+  const source = realArr[0]
+  const [, ...targets] = realArr
   let result = source.map(v => v)
 
   targets.forEach((target) => {
@@ -361,6 +366,35 @@ export function throwError(message?: string): never{
 }
 
 // #endregion
+
+// #region any 类型的工具类
+
+/**
+ * 给定一个对象，然后调用返回值，传入一个回调函数，回调函数的参数就是该对象，返回值就是整个函数的返回值。 \
+ * 可用于缩短变量 又不需要定义中间变量，也不用有 with 的作用域烦恼 \
+ * 类似于 Kotlin 的 Any.let，JS 的 Array.map 但只是单个变量。
+ *
+ * 函数名由来： \
+ * 叫 let 比较方便，但是 let 在严格模式是关键字不可用。 \
+ * 类似于 with，但是 with 是关键字不可用。 \
+ * 叫 map 会和 Map 类型混淆。 \
+ * 叫 use 会和组合式函数混淆。 \
+ * let 和 give 类似，就叫 give 吧。。。
+ * @param v
+ * @example
+ * give(1)(v => v + 1) // 2
+ * @version 2.8.0.230508
+ * @since 2.8.0.230508
+ */
+export function give<T>(v: T) {
+  return function<R>(func: (v: T) => R) {
+    return func(v)
+  }
+}
+
+// #endregion
+
+
 /**
  * 缺省值，为了 vue3 的 prop 中区分判断无传参和传入undefined而出现。\
  * 并通过 import 解决新版本的vue（^3.2.6）报错的问题

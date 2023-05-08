@@ -222,6 +222,10 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+### 2.8.0.230508
+
+feat: 新增 give 方法，cartesianProductRecordArray 支持不定长参数中传入 undefined
+
 ### 2.7.0.230507
 
 feat: throwError
