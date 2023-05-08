@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.8.0.230508 feat: 新增 give 方法，cartesianProductRecordArray 支持不定长参数中传入 undefined
+ * @version 2.9.0.230508 feat: give 支持多参数
  * @changeLog
+ *          2.9.0.230508 feat: give 支持多参数
  *          2.8.0.230508 feat: 新增 give 方法，cartesianProductRecordArray 支持不定长参数中传入 undefined
  *          2.7.0.230507 feat: throwError
  *          2.6.1.230506 fix: 修改一些语法/类型问题
@@ -370,25 +371,37 @@ export function throwError(message?: string): never{
 // #region any 类型的工具类
 
 /**
- * 给定一个对象，然后调用返回值，传入一个回调函数，回调函数的参数就是该对象，返回值就是整个函数的返回值。 \
- * 可用于缩短变量 又不需要定义中间变量，也不用有 with 的作用域烦恼 \
+ * 先给定参数，再给函数并执行返回。 \
+ * 类似于 IIFE 函数和参数互换位置
+ * ```
+ * give(1,2)((a,b) => a + b) === ((a,b) => a + b)(1,2) // 3
+ * give(1)(v => v + 1) === (v => v + 1)(1) // 2
+ * ```
+ * 
+ * 单参数可用于缩短变量 又不需要定义中间变量，也不用有 with 的作用域烦恼 \
  * 类似于 Kotlin 的 Any.let，JS 的 Array.map 但只是单个变量。
- *
+ * 
+ * 注：其实也可以用 IIFE 来重用长名称引用：
+ * ```js
+ * (v => v + 1)(1) // 2
+ * ```
+ * 
  * 函数名由来： \
  * 叫 let 比较方便，但是 let 在严格模式是关键字不可用。 \
  * 类似于 with，但是 with 是关键字不可用。 \
  * 叫 map 会和 Map 类型混淆。 \
  * 叫 use 会和组合式函数混淆。 \
  * let 和 give 类似，就叫 give 吧。。。
- * @param v
+ * @param v 不定长参数
  * @example
  * give(1)(v => v + 1) // 2
- * @version 2.8.0.230508
+ * @version 2.9.0.230508 feat: give 支持多参数 \
+ *          2.8.0.230508 new
  * @since 2.8.0.230508
  */
-export function give<T>(v: T) {
-  return function<R>(func: (v: T) => R) {
-    return func(v)
+export function give<P extends Array<unknown>>(...v: P) {
+  return function<R>(func: (...v: P) => R) {
+    return func(...v)
   }
 }
 
