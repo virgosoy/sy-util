@@ -174,6 +174,16 @@ includes - 柯里化Array#includes
 
 复制修改于 clipboard.js v2.1.0.210422（剪贴板相关工具），去掉外部依赖，自己实现解析
 
+## PromiseUtils.ts
+
+Promise 工具类
+
+主要是处理多个 Promise 的组合调用
+
+* queue - 队列，按顺序执行 promise
+
+
+
 ## clipboard.js 2
 
 依赖xlsx、./basetype.js
