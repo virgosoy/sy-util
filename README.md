@@ -5,6 +5,8 @@ javascript utils
 
 ## validate.js
 
+@Deprecated 2023-06-27 使用 StringUtils.ts v2.0.0.220610 代替
+
 input 字符串校验类
 
 v1 为 esmodule类型，使用原生js，名称为 validate.js
@@ -32,6 +34,10 @@ isNumber - 数字
 isEmptyTrim - 为空（去除空格后校验）
 
 isInteger - 整数(带负号也可)
+
+### 2.0.0.230420
+
+从 validate.js 1.3.0.200911 版本改为 ts
 
 ### 1.3.0.200911
 
@@ -65,7 +71,7 @@ isNumber - 数字
 
 ## StringUtils.ts
 
-字符串工具类
+字符串工具类，包含了 validate.js v1 所有方法
 
 ### 2.0.0.220610
 

@@ -1,6 +1,6 @@
 /**
  * input 字符串校验类 
- * 
+ * @Deprecated 2023-06-27 使用 StringUtils.ts 代替
  * @version 2.0.0.230420 从 validate.js 1.3.0.200911 版本改为 ts
  * 
  * @changeLog 2.0.0.230420 从 validate.js 1.3.0.200911 版本改为 ts
