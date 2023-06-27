@@ -73,6 +73,10 @@ isNumber - 数字
 
 字符串工具类，包含了 validate.js v1 所有方法
 
+### 2.1.0.230627
+
+feat: formatNumber 格式化数字为千分位
+
 ### 2.0.0.220610
 
 复制自 validate.js v1.3.0.200911
