@@ -7,7 +7,9 @@ javascript utils
 
 input 字符串校验类
 
-esmodule类型，使用原生js
+v1 为 esmodule类型，使用原生js，名称为 validate.js
+
+v2 为 ts 且重命名为 ValidateUtils.ts
 
 ### 所有方法
 
