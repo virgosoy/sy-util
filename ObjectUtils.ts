@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.9.0.230508 feat: give 支持多参数
+ * @version 2.10.0.230628 feat: mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误
  * @changeLog
+ *          2.10.0.230628 feat: mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误
  *          2.9.0.230508 feat: give 支持多参数
  *          2.8.0.230508 feat: 新增 give 方法，cartesianProductRecordArray 支持不定长参数中传入 undefined
  *          2.7.0.230507 feat: throwError
@@ -60,6 +61,28 @@ export function groupBy<T>(array: T[], fn: (o: T) => unknown): Record<string, T[
  */
 export function distinct<T>(arr: T[]) {
   return [...new Set(arr)]
+}
+
+/**
+ * 使用 map 结构进行 distinct
+ * 浅克隆，不会对原有数组做修改
+ * @param arr 要去重的数组
+ * @param map 去重映射回调函数，如果此函数的返回值一样（使用 object key 的规则）则表示元素重复
+ * @returns 去重后的数组，注意，重复的会只保留最后一个（受到 `Object.fromEntries` 的影响）
+ * @since 2.10.0.230628
+ * @deprecated 暂未使用临时标记
+ */
+export function mapdistinct<T>(
+  arr: T[],
+  map: (value: T, index: number, array: T[]) => string | number
+) {
+  return Object.values(
+    Object.fromEntries(
+      arr.map((value, index, array) => {
+        return [map(value, index, array), value]
+      })
+    )
+  )
 }
 
 /**
@@ -364,6 +387,19 @@ export function isEmptyAsString(obj: unknown) {
  */
 export function throwError(message?: string): never{
   throw new Error(message)
+}
+
+/**
+ * 如果值存在则返回该值，否则抛出错误
+ * @param v 值
+ * @param msg 错误消息
+ * @returns -
+ * @since 2.10.0.230628
+ * @deprecated 暂未使用临时标记
+ */
+export function required<T>(v: T, msg?: string){
+  if(v === undefined || v === null) throw new Error(msg)
+  return v
 }
 
 // #endregion
