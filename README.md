@@ -244,6 +244,10 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+### 2.10.0.230628
+
+feat(ObjectUtils): mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误
+
 ### 2.9.0.230508
 
 feat: give 支持多参数
@@ -297,3 +301,20 @@ feat: 增加方法 cartesianProductRecordArray（Record数组的笛卡尔积）
 ### 2.0.0.220701
 
 从 basetype.js（基础数据类型工具类）修改，改为 ts
+
+
+
+## TsTypeUtils
+
+TS 类型工具类
+
+所有的函数均不对数据做实际处理，只会处理类型
+
+### 0.1.0.230424
+
+ShrinkFieldType / StringFieldEnum - 缩小字段类型
+
+MaybeFieldType - 可能字段类型，用于 IDE 提示输入，不对类型做额外控制
+
+FieldNotNull - 将指定字段设置为非空
+
