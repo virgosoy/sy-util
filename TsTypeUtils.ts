@@ -2,7 +2,10 @@
  * TS 类型工具类
  * 
  * 所有的函数均不对数据做实际处理，只会处理类型
- * @version 0.1.0.230424
+ * @version 0.2.0.230704 ReplaceKey：替换对象的 key
+ * @changeLog
+ *          0.2.0.230704 ReplaceKey：替换对象的 key
+ *          0.1.0.230424
  */
 
 /**
@@ -17,6 +20,7 @@
  *   a: '1', // 只能输入'1'、'2'，其他会报错
  *   b: '3'
  * }
+ * @since 0.1.0.230424
  */
 export type ShrinkFieldType<T, F extends keyof(T), E extends T[F]> = T & {
   [k in F]: E
@@ -26,6 +30,7 @@ export type ShrinkFieldType<T, F extends keyof(T), E extends T[F]> = T & {
  * 字符串字段枚举
  * 
  * ShrinkFieldType 的别名
+ * @since 0.1.0.230424
  */
 export type StringFieldEnum<T, F extends keyof(T), E extends T[F]> = ShrinkFieldType<T, F, E>
 
@@ -35,6 +40,7 @@ export type StringFieldEnum<T, F extends keyof(T), E extends T[F]> = ShrinkField
  * shrinkTableFieldTypeCurry(myTable)<'field', 'value1' | 'value2'>()
  * @param table 
  * @returns 
+ * @since 0.1.0.230424
  */
 export function shrinkTableFieldTypeCurry<T = unknown>(table: T[]) {
   return function<F extends keyof(T) = keyof(T), E extends T[F] = T[F]>() {
@@ -81,6 +87,7 @@ const b : BB ={
  *   a: '1', // IDE 会提示输入'1'、'2'，但输入其他也不会错
  *   b: '3'
  * }
+ * @since 0.1.0.230424
  */
 type MaybeFieldType<T, F extends keyof(T), E extends T[F]> = T | {
   [k in F]: E
@@ -99,6 +106,7 @@ type MaybeFieldType<T, F extends keyof(T), E extends T[F]> = T | {
  *   a: '1', // 不允许为 null 了
  *   b: null
  * }
+ * @since 0.1.0.230424
  */
 export type FieldNotNull<T, F extends keyof(T)> = {
   [P in F] : Exclude<T[P], null>
@@ -110,6 +118,7 @@ export type FieldNotNull<T, F extends keyof(T)> = {
  * 将表格中指定字段设置为非空（柯里化函数），不对数据处理
  * @param table 
  * @returns 
+ * @since 0.1.0.230424
  */
 export function tableFieldNotNullCurry<T>(table: T[]){
   return function<F extends keyof(T)>(){
@@ -117,3 +126,16 @@ export function tableFieldNotNullCurry<T>(table: T[]){
   }
 }
 
+/**
+ * 替换对象的 key
+ * 
+ * 同样支持可辨识类型
+ * @example
+ * type A = {t:1,v:3,u:5} | {t:2,v:4,u:6}
+ * type B = ReplaceKey<A, 't', 'tt'> // {tt:1,v:3,u:5} | {tt:2,v:4,u:6}
+ * @since 0.2.0 2023-07-04
+ */
+export type ReplaceKey<T extends {}, From extends string, To extends string> = 
+  {
+    [K in keyof T as K extends From ? To : K]: T[K]
+  }

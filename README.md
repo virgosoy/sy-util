@@ -310,6 +310,10 @@ TS 类型工具类
 
 所有的函数均不对数据做实际处理，只会处理类型
 
+### 0.2.0.230704
+
+feat(TsTypeUtils): 0.2.0.230704 ReplaceKey：替换对象的 key
+
 ### 0.1.0.230424
 
 ShrinkFieldType / StringFieldEnum - 缩小字段类型
