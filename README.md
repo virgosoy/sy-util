@@ -244,6 +244,10 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+### 2.11.0.230705 
+
+feat(ObjectUtils): 2.11.0.230705 mapValues：将对象的值进行映射，返回一个新对象；setItems：给原数组元素一一赋值；moveArrayItemOrderNumberById：移动数组元素，通过排序号确定顺序
+
 ### 2.10.0.230628
 
 feat(ObjectUtils): mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误

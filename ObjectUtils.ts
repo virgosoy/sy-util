@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.10.0.230628 feat: mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误
+ * @version 2.11.0.230705 feat: mapValues：将对象的值进行映射，返回一个新对象；setItems：给原数组元素一一赋值；moveArrayItemOrderNumberById：移动数组元素，通过排序号确定顺序
  * @changeLog
+ *          2.11.0.230705 feat: mapValues：将对象的值进行映射，返回一个新对象；setItems：给原数组元素一一赋值；moveArrayItemOrderNumberById：移动数组元素，通过排序号确定顺序
  *          2.10.0.230628 feat: mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误
  *          2.9.0.230508 feat: give 支持多参数
  *          2.8.0.230508 feat: 新增 give 方法，cartesianProductRecordArray 支持不定长参数中传入 undefined
@@ -23,6 +24,19 @@
  */
 
 // #region 数组相关
+
+/**
+ * 给原数组元素一一赋值
+ * 会修改当前数组，但是不会修改整个原数组的引用。
+ * @param originArr 原数组
+ * @param newArr 新数组
+ * @since 2.11.0.230705
+ */
+export function setItems<T extends Array<unknown>>(originArr: [...T], newArr: [...T]){
+  originArr.forEach((v, i, a) => {
+    a[i] = newArr[i]
+  })
+}
 
 /**
  * 检查数组是否全部包含指定的数组元素
@@ -302,6 +316,32 @@ export function moveArrayItemOrderNumber<OrderNumberKey extends string = 'orderN
 }
 
 /**
+ * 移动数组元素，通过排序号确定顺序 \
+ * 会修改排序号，而不会修改数组实际顺序 \
+ * 注意：如果排序号 或 id 有重复，那么有可能会排序失败。
+ * @param arr 数组
+ * @param orderKey 排序号的 key 名称
+ * @param idKey id 的 key 名称
+ * @param sourceId 要移动的元素id
+ * @param targetId 移动到的目标元素id（即移动后元素新位置在移动前的哪个元素上）
+ * @returns 排序号有变动的元素数组
+ * @version 2.11.0
+ * @since 2.11.0.230705 2023-06-29
+ */
+export function moveArrayItemOrderNumberById<OrderNumberKey extends string = 'orderNumber', IdKey extends string = 'id', IdValue extends string | number = string | number>
+    (
+      arr: ({[K in OrderNumberKey]: number} & {[K in IdKey]: IdValue})[],
+      orderKey: OrderNumberKey,
+      idKey: IdKey,
+      sourceId: IdValue,
+      targetId: IdValue,
+    ){
+    const sourceIndex = arr.findIndex(o => o[idKey] === sourceId)
+    const targetIndex = arr.findIndex(o => o[idKey] === targetId)
+    return moveArrayItemOrderNumber(arr, orderKey, sourceIndex, targetIndex)
+}
+
+/**
  * 移动数组元素，会修改原数组
  * @param arr 数组
  * @param sourceIndex 要移动的元素索引
@@ -336,6 +376,29 @@ export function moveArrayById<IdKey extends string = 'id', Id extends string | n
 
 // #endregion
 
+// #region 对象相关
+
+/**
+ * 将对象的值进行映射，返回一个新对象。 \
+ * 浅克隆原始对象并 map \
+ * 类似 lodash 的 mapValue
+ * @param obj 对象
+ * @param map map 函数
+ * @returns 新对象
+ * @since 2.11.0.230705 2023-07-03
+ */
+export function mapValues<
+    O extends Record<string | number | symbol, unknown>, 
+    NV>
+    (obj: O, map: (value: O[keyof O], key: keyof O, obj: O) => NV){
+  const result: Record<keyof O, NV> = {} as Record<keyof O, NV>
+  for(const k in obj){
+    result[k] = map(obj[k], k, obj)
+  }
+  return result
+}
+
+// #endregion
 // #region 变量判断
 
 /**
