@@ -310,6 +310,10 @@ TS 类型工具类
 
 所有的函数均不对数据做实际处理，只会处理类型
 
+### 0.3.0.230705
+
+feat(TsTypeUtils): DiscriminatedValueType：根据对象的原 key 和 value，获取目标 key 的 value 类型。
+
 ### 0.2.0.230704
 
 feat(TsTypeUtils): 0.2.0.230704 ReplaceKey：替换对象的 key

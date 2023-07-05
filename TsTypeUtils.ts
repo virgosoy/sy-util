@@ -2,8 +2,9 @@
  * TS 类型工具类
  * 
  * 所有的函数均不对数据做实际处理，只会处理类型
- * @version 0.2.0.230704 ReplaceKey：替换对象的 key
+ * @version 0.3.0.230705 feat(TsTypeUtils): DiscriminatedValueType：根据对象的原 key 和 value，获取目标 key 的 value 类型。
  * @changeLog
+ *          0.3.0.230705 feat(TsTypeUtils): DiscriminatedValueType：根据对象的原 key 和 value，获取目标 key 的 value 类型。
  *          0.2.0.230704 ReplaceKey：替换对象的 key
  *          0.1.0.230424
  */
@@ -131,11 +132,30 @@ export function tableFieldNotNullCurry<T>(table: T[]){
  * 
  * 同样支持可辨识类型
  * @example
+ * ```ts
  * type A = {t:1,v:3,u:5} | {t:2,v:4,u:6}
  * type B = ReplaceKey<A, 't', 'tt'> // {tt:1,v:3,u:5} | {tt:2,v:4,u:6}
+ * ```
  * @since 0.2.0 2023-07-04
  */
 export type ReplaceKey<T extends {}, From extends string, To extends string> = 
   {
     [K in keyof T as K extends From ? To : K]: T[K]
   }
+
+/**
+ * 根据对象的原 key 和 value，获取目标 key 的 value 类型。
+ * 主要用于可辨识类型
+ * @param O 对象类型
+ * @param SK 原 key
+ * @param TK 目标 value 类型对应的 key
+ * @param SV 原 key 的 value
+ * @example
+ * ```ts
+ * type A = {t:1,v:3,u:5} | {t:2,v:4,u:6}
+ * type B = ValueType<A, 't', 'v', 1> // 3
+ * ```
+ * @since 0.3.0 2023-07-04
+ */
+export type DiscriminatedValueType<O extends object, SK extends keyof O, TK extends keyof O, TV extends O[SK], _U extends O = O> =
+    _U extends O ? TV extends _U[SK] ? _U[TK] : never : never
