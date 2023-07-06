@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.11.0.230705 feat: mapValues：将对象的值进行映射，返回一个新对象；setItems：给原数组元素一一赋值；moveArrayItemOrderNumberById：移动数组元素，通过排序号确定顺序
+ * @version 2.12.0.230706 feat: 新增 WeakMap 的 5 个工具方法 mapGetOrSetIfAbsent、mapCompute、mapComputeIfAbsent、mapComputeIfPresent、mapMerge
  * @changeLog
+ *          2.12.0.230706 feat: 新增 WeakMap 的 5 个工具方法 mapGetOrSetIfAbsent、mapCompute、mapComputeIfAbsent、mapComputeIfPresent、mapMerge
  *          2.11.0.230705 feat: mapValues：将对象的值进行映射，返回一个新对象；setItems：给原数组元素一一赋值；moveArrayItemOrderNumberById：移动数组元素，通过排序号确定顺序
  *          2.10.0.230628 feat: mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误
  *          2.9.0.230508 feat: give 支持多参数
@@ -399,6 +400,118 @@ export function mapValues<
 }
 
 // #endregion
+
+//#region Map 相关
+
+// 假定所有 Map 的 value 中的值是可以为 undefined 的
+
+/**
+ * 获取 key 的 value，如果 key 不存在则 set value 并返回此 value
+ * @param map 
+ * @param key 
+ * @param value 
+ * @returns 指定 key 最新的 value
+ * @since 2.12.0.230706 2023-07-06
+ */
+function getOrSetIfAbsent<K extends object, V>(map: WeakMap<K, V>, key: K, value: V){
+  if(!map.has(key)){
+    map.set(key, value)
+    return value
+  }
+  return map.get(key)!
+}
+
+/**
+ * 计算指定 key 的旧 value 映射到新 value。
+ * 如果 map 中原本就没有则旧 value 为 undefined。
+ * 
+ * 类似 java 的 Map#compute
+ * @param map 
+ * @param key 
+ * @param remappingFunction 
+ * @returns 新 value
+ * @since 2.12.0.230706 2023-07-06
+ */
+function compute<K extends object, V>(map: WeakMap<K, V>, key: K, remappingFunction: (value: V | undefined, key: K) => V){
+  const oldValue = map.get(key)
+  const newValue = remappingFunction(oldValue, key)
+  // 添加或覆盖旧值
+  map.set(key, newValue)
+  return newValue
+}
+
+/**
+ * 如果 key 不存在，则计算指定 key 的新 value。
+ * 
+ * 类似 java 的 Map#computeIfAbsent
+ * @param map 
+ * @param key 
+ * @param mappingFunction 
+ * @returns 指定 key 最新的 value
+ * @since 2.12.0.230706 2023-07-06
+ */
+function computeIfAbsent<K extends object, V>(map: WeakMap<K, V>, key: K, mappingFunction: (key: K) => V) {
+  if(!map.has(key)){
+    const newValue = mappingFunction(key)
+    map.set(key, newValue)
+    return newValue
+  }
+  return map.get(key)!
+}
+
+/**
+ * 如果 key 存在，则计算指定 key 的旧 value 映射到新 value。
+ * 
+ * 类似 java 的 Map#computeIfPresent
+ * @param map 
+ * @param key 
+ * @param remappingFunction 
+ * @returns 指定 key 最新的 value，如果 key 不存在则返回 undefined
+ * @since 2.12.0.230706 2023-07-06
+ */
+function computeIfPresent<K extends object, V>(map: WeakMap<K, V>, key: K, remappingFunction: (value: V, key: K) => V){
+  if(map.has(key)){
+    const oldValue = map.get(key)!
+    const newValue = remappingFunction(oldValue, key)
+    map.set(key, newValue)
+    return newValue
+  }
+  return undefined
+}
+
+/**
+ * 如果 key 不存在，则设置值。否则使用函数计算旧值与设置值，返回新值。
+ * 
+ * 类似 java 的 Map#merge
+ * @param map 
+ * @param key 
+ * @param value 
+ * @param remappingFunction 
+ * @returns 指定 key 最新的 value
+ * @since 2.12.0.230706 2023-07-06
+ * @example
+ * 对于合并字符串很有用：
+ * ```ts
+ * const msg = 'msg'
+ * merge(map, key, msg, (a,b) => a.concat(b)) // 如果 key 不存在则为 msg，否则则为旧 value + msg
+ * ```
+ */
+function merge<K extends object, V>(map: WeakMap<K, V>, key: K, value: V, remappingFunction: (oldValue: V, value: V) => V){
+  const newValue = !map.has(key) ? value : remappingFunction(map.get(key)!, value)
+  map.set(key, newValue)
+  return newValue
+}
+
+// 统一导出
+export {
+  getOrSetIfAbsent as mapGetOrSetIfAbsent,
+  compute as mapCompute,
+  computeIfAbsent as mapComputeIfAbsent,
+  computeIfPresent as mapComputeIfPresent,
+  merge as mapMerge,
+}
+//#endregion
+
 // #region 变量判断
 
 /**
