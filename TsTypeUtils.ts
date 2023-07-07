@@ -146,10 +146,10 @@ export type ReplaceKey<T extends {}, From extends string, To extends string> =
 /**
  * 根据对象的原 key 和 value，获取目标 key 的 value 类型。
  * 主要用于可辨识类型
- * @param O 对象类型
- * @param SK 原 key
- * @param TK 目标 value 类型对应的 key
- * @param SV 原 key 的 value
+ * @template O 对象类型
+ * @template SK 原 key
+ * @template TK 目标 value 类型对应的 key
+ * @template SV 原 key 的 value
  * @example
  * ```ts
  * type A = {t:1,v:3,u:5} | {t:2,v:4,u:6}
