@@ -244,6 +244,10 @@ UI 工具类，封装一些常用的 UI
 
 []、{}、any 类型 工具类
 
+### 2.13.0.230710
+
+feat(ObjectUtils): 2.13.0.230710 pick: 过滤对象指定 keys，返回一个新对象
+
 ### 2.12.0.230706
 
 feat(ObjectUtils): 2.12.0.230706 新增 WeakMap 的 5 个工具方法 mapGetOrSetIfAbsent、mapCompute、mapComputeIfAbsent、mapComputeIfPresent、mapMerge

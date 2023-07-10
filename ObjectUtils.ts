@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.12.0.230706 feat: 新增 WeakMap 的 5 个工具方法 mapGetOrSetIfAbsent、mapCompute、mapComputeIfAbsent、mapComputeIfPresent、mapMerge
+ * @version 2.13.0.230710 feat: pick: 过滤对象指定 keys，返回一个新对象
  * @changeLog
+ *          2.13.0.230710 feat: pick: 过滤对象指定 keys，返回一个新对象
  *          2.12.0.230706 feat: 新增 WeakMap 的 5 个工具方法 mapGetOrSetIfAbsent、mapCompute、mapComputeIfAbsent、mapComputeIfPresent、mapMerge
  *          2.11.0.230705 feat: mapValues：将对象的值进行映射，返回一个新对象；setItems：给原数组元素一一赋值；moveArrayItemOrderNumberById：移动数组元素，通过排序号确定顺序
  *          2.10.0.230628 feat: mapdistinct：使用 map 结构进行 distinct；required：如果值存在则返回该值，否则抛出错误
@@ -397,6 +398,17 @@ export function mapValues<
     result[k] = map(obj[k], k, obj)
   }
   return result
+}
+
+/**
+ * 过滤对象指定 keys，返回一个新对象
+ * @param obj -
+ * @param keys 需要保留的 key 数组
+ * @returns 一个新的对象，不会修改原对象。浅克隆。
+ * @since 2.13.0.230710
+ */
+export function pick<O extends Record<keyof any, unknown>, KS extends Array<keyof O>>(obj: O, keys: KS){
+  return Object.fromEntries(Object.entries(obj).filter(([k,v]) => keys.includes(k))) as Pick<O, KS[number]>
 }
 
 // #endregion
