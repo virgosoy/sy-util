@@ -338,3 +338,11 @@ MaybeFieldType - 可能字段类型，用于 IDE 提示输入，不对类型做�
 
 FieldNotNull - 将指定字段设置为非空
 
+
+
+## vue 系列
+
+### createSharedComposable.ts
+
+创建可共享的可组合项
+
