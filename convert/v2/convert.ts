@@ -1,7 +1,8 @@
 /**
  * 类型转换
- * @version 2.1.0.220630 feat:numberToABC、numberFromABC
+ * @version 2.1.1.230825 fix: 无法识别 NaN
  * @changeLog
+ *          2.1.1.230825 fix: 无法识别 NaN
  *          2.1.0.220630 feat:numberToABC、numberFromABC
  *          2.0.0.220428
  */
@@ -92,12 +93,13 @@ export function groovyStringifyFromJson(data : unknown) : string{
  * 数字转 ABC，类似 excel 的列头，A=1
  * @param num
  * @returns
+ * @version 2.1.1.230825、2.1.0.220630
  * @since 2.1.0.220630
  */
  export function numberToABC(num: number) {
   // A=1 Z=26 ZZ=26^2+26 ZZZ=26^3+26^2+26 ...
   // 值x26^(位数-1)，如 BC = 2*26^1 + 3*26^0，CZ = 3*26^1 + 26*26^0
-  if (num === NaN || num <= 0 || num % 1 !== 0) {
+  if (Number.isNaN(num) || num <= 0 || num % 1 !== 0) {
     throw new Error('仅支持正整数')
   }
   let result = ''

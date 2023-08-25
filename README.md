@@ -93,6 +93,12 @@ isEmpty、isEmptyTrim 方法
 
 类型转换 v2 版本，使用 ts
 
+### 2.1.1.230825 
+
+#### Fixed
+
+- fix: 无法识别 NaN
+
 ### 2.1.0.220630
 
 #### Added
