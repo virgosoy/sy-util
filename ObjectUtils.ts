@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.13.0.230710 feat: pick: 过滤对象指定 keys，返回一个新对象
+ * @version 2.14.0.230906 feat: omit: 忽略对象指定 keys，返回一个新对象；并修正一些ts检查
  * @changeLog
+ *          2.14.0.230906 feat: omit: 忽略对象指定 keys，返回一个新对象；并修正一些ts检查
  *          2.13.0.230710 feat: pick: 过滤对象指定 keys，返回一个新对象
  *          2.12.0.230706 feat: 新增 WeakMap 的 5 个工具方法 mapGetOrSetIfAbsent、mapCompute、mapComputeIfAbsent、mapComputeIfPresent、mapMerge
  *          2.11.0.230705 feat: mapValues：将对象的值进行映射，返回一个新对象；setItems：给原数组元素一一赋值；moveArrayItemOrderNumberById：移动数组元素，通过排序号确定顺序
@@ -407,8 +408,24 @@ export function mapValues<
  * @returns 一个新的对象，不会修改原对象。浅克隆。
  * @since 2.13.0.230710
  */
-export function pick<O extends Record<keyof any, unknown>, KS extends Array<keyof O>>(obj: O, keys: KS){
-  return Object.fromEntries(Object.entries(obj).filter(([k,v]) => keys.includes(k))) as Pick<O, KS[number]>
+export function pick<O extends Record<string | number | symbol, unknown>, KS extends Array<keyof O>>(obj: O, keys: KS){
+  return Object.fromEntries(Object.entries(obj).filter(([k]) => keys.includes(k))) as Pick<O, KS[number]>
+}
+
+/**
+ * 忽略对象指定 keys，返回一个新对象
+ * @param obj -
+ * @param keys 需要忽略的 key 数组
+ * @returns 一个新的对象，不会修改原对象。浅克隆。
+ * @since 2.14.0.230906
+ */
+export function omit<
+  O extends Record<string | number | symbol, unknown>,
+  KS extends Array<keyof O>
+>(obj: O, keys: KS) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([k]) => !keys.includes(k))
+  ) as Omit<O, KS[number]>
 }
 
 // #endregion
@@ -425,12 +442,13 @@ export function pick<O extends Record<keyof any, unknown>, KS extends Array<keyo
  * @returns 指定 key 最新的 value
  * @since 2.12.0.230706 2023-07-06
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function getOrSetIfAbsent<K extends object, V>(map: WeakMap<K, V>, key: K, value: V){
   if(!map.has(key)){
     map.set(key, value)
     return value
   }
-  return map.get(key)!
+  return map.get(key) as V
 }
 
 /**
@@ -444,6 +462,7 @@ function getOrSetIfAbsent<K extends object, V>(map: WeakMap<K, V>, key: K, value
  * @returns 新 value
  * @since 2.12.0.230706 2023-07-06
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function compute<K extends object, V>(map: WeakMap<K, V>, key: K, remappingFunction: (value: V | undefined, key: K) => V){
   const oldValue = map.get(key)
   const newValue = remappingFunction(oldValue, key)
@@ -462,13 +481,14 @@ function compute<K extends object, V>(map: WeakMap<K, V>, key: K, remappingFunct
  * @returns 指定 key 最新的 value
  * @since 2.12.0.230706 2023-07-06
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function computeIfAbsent<K extends object, V>(map: WeakMap<K, V>, key: K, mappingFunction: (key: K) => V) {
   if(!map.has(key)){
     const newValue = mappingFunction(key)
     map.set(key, newValue)
     return newValue
   }
-  return map.get(key)!
+  return map.get(key) as V
 }
 
 /**
@@ -481,9 +501,10 @@ function computeIfAbsent<K extends object, V>(map: WeakMap<K, V>, key: K, mappin
  * @returns 指定 key 最新的 value，如果 key 不存在则返回 undefined
  * @since 2.12.0.230706 2023-07-06
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function computeIfPresent<K extends object, V>(map: WeakMap<K, V>, key: K, remappingFunction: (value: V, key: K) => V){
   if(map.has(key)){
-    const oldValue = map.get(key)!
+    const oldValue = map.get(key) as V
     const newValue = remappingFunction(oldValue, key)
     map.set(key, newValue)
     return newValue
@@ -508,8 +529,9 @@ function computeIfPresent<K extends object, V>(map: WeakMap<K, V>, key: K, remap
  * merge(map, key, msg, (a,b) => a.concat(b)) // 如果 key 不存在则为 msg，否则则为旧 value + msg
  * ```
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function merge<K extends object, V>(map: WeakMap<K, V>, key: K, value: V, remappingFunction: (oldValue: V, value: V) => V){
-  const newValue = !map.has(key) ? value : remappingFunction(map.get(key)!, value)
+  const newValue = !map.has(key) ? value : remappingFunction(map.get(key) as V, value)
   map.set(key, newValue)
   return newValue
 }
