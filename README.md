@@ -93,6 +93,12 @@ isEmpty、isEmptyTrim 方法
 
 类型转换 v2 版本，使用 ts
 
+### 2.2.0.230906
+
+#### Added
+
+- feat: findParents 查找当前对象与其所有父节点
+
 ### 2.1.1.230825 
 
 #### Fixed

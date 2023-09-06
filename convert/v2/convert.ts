@@ -1,7 +1,8 @@
 /**
  * 类型转换
- * @version 2.1.1.230825 fix: 无法识别 NaN
+ * @version 2.2.0.230906 feat: findParents 查找当前对象与其所有父节点
  * @changeLog
+ *          2.2.0.230906 feat: findParents 查找当前对象与其所有父节点
  *          2.1.1.230825 fix: 无法识别 NaN
  *          2.1.0.220630 feat:numberToABC、numberFromABC
  *          2.0.0.220428
@@ -61,6 +62,39 @@ export function toTree(data : any[], {idKey = 'id', pidKey = 'pid', childrenKey 
       }
   });
   return result;
+}
+
+/**
+ * 查找当前对象与其所有父节点
+ * @param data 数据
+ * @param options -
+ * @returns 一个数组，元素为元祖，其中第一个元素为当前数据元素，第二个元素为当前数据元素的父节点，从近到远。
+ * @since 2.2.0.230906
+ */
+export function findParents<T extends Record<string, unknown>>(
+  data: T[],
+  {idKey = 'id', pidKey = 'pid'} : {idKey?: keyof T, pidKey?: keyof T} = {idKey: 'id', pidKey: 'pid'}
+): [T, T[]][] {
+  const map: Record<keyof unknown, T> = {}
+  data.forEach(item => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    map[item[idKey]] = item
+  })
+  return data.map(item => {
+    const parents: T[] = []
+    let cur: T = item
+    while(true) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      cur = map[cur[pidKey]]
+      if(cur === undefined || parents.includes(cur)) {
+        break
+      }
+      parents.push(cur)
+    }
+    return [item, parents]
+  })
 }
 
 /**
