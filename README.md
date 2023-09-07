@@ -73,6 +73,10 @@ isNumber - 数字
 
 字符串工具类，包含了 validate.js v1 所有方法
 
+### 2.2.0.230907
+
+feat: wrapIfHasLength 将字符串包裹在指定前后缀中，如果为空字符串则不操作
+
 ### 2.1.0.230627
 
 feat: formatNumber 格式化数字为千分位
@@ -251,6 +255,17 @@ getExcelData - 根据剪贴板获取excel数据（二维数组）
 UI 工具类，封装一些常用的 UI
 
 一般是贴合实际项目的，可能并不通用
+
+例子：
+
+```js
+await UI.doSomething(async () => await apiInvoke(param1), '成功信息')
+await UI.tryDo('成功信息', apiInvoke, param1)
+```
+
+
+
+
 
 ## ObjectUtils
 

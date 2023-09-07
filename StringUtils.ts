@@ -1,12 +1,15 @@
 /**
  * 字符串工具类
  * 复制自 validate.js v1.3.0.200911
- * 
- * @version 2.1.0.230627 feat: formatNumber 格式化数字为千分位
+ *
+ * @version 2.2.0.230907 feat: wrapIfHasLength 将字符串包裹在指定前后缀中，如果为空字符串则不操作
  * @changelog
+ *          2.2.0.230907 feat: wrapIfHasLength 将字符串包裹在指定前后缀中，如果为空字符串则不操作
  *          2.1.0.230627 feat: formatNumber 格式化数字为千分位
  *          2.0.0.220610 复制自 validate.js v1.3.0.200911
  */
+
+// #region 校验相关
 
 /**
  * 邮箱
@@ -196,16 +199,41 @@ export function isInteger(s: string) {
   return /^-?[0-9]+$/.test(s)
 }
 
+// #endregion
+
+// #region 格式化相关
+
 /**
  * 格式化数字为千分位
  * @param number 数字
- * @returns 
+ * @returns
  * @since 2.1.0.230627
  */
 export function formatNumber(number: string | number) {
   const sps = (number + '').split('.')
   const re = /\d{1,3}(?=(\d{3})+$)/g
   const int = sps[0].replace(re, '$&,') // 整数部分含千分位
-  let dig = sps[1]
-  return dig ? `${int}.${dig}` : int 
+  const dig = sps[1]
+  return dig ? `${int}.${dig}` : int
 }
+
+/**
+ * 将字符串包裹在指定前后缀中，如果为空字符串则不操作
+ * @param s 字符串
+ * @param prefix 前缀
+ * @param suffix 后缀
+ * @returns -
+ * @since 2.2.0.230907
+ */
+export function wrapIfHasLength(
+  s: string | null | undefined,
+  prefix: string,
+  suffix: string
+) {
+  if (!hasLength(s)) {
+    return ''
+  }
+  return `${prefix}${s}${suffix}`
+}
+
+// #endregion
