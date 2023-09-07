@@ -2,8 +2,13 @@
  * 字符串工具类
  * 复制自 validate.js v1.3.0.200911
  *
- * @version 2.2.0.230907 feat: wrapIfHasLength 将字符串包裹在指定前后缀中，如果为空字符串则不操作
+ * @version 2.3.0.230907 feat:
+ *                       wrapIfNotZero 如果数字不为0，那么将其包裹在指定前后缀中，否则返回固定文本。
+ *                       joinIfHasLength 给定字符串数组，如果元素有长度，则参与合并。
  * @changelog
+ *          2.3.0.230907 feat:
+ *                       wrapIfNotZero 如果数字不为0，那么将其包裹在指定前后缀中，否则返回固定文本。
+ *                       joinIfHasLength 给定字符串数组，如果元素有长度，则参与合并。
  *          2.2.0.230907 feat: wrapIfHasLength 将字符串包裹在指定前后缀中，如果为空字符串则不操作
  *          2.1.0.230627 feat: formatNumber 格式化数字为千分位
  *          2.0.0.220610 复制自 validate.js v1.3.0.200911
@@ -222,8 +227,11 @@ export function formatNumber(number: string | number) {
  * @param s 字符串
  * @param prefix 前缀
  * @param suffix 后缀
- * @returns -
+ * @returns
  * @since 2.2.0.230907
+ * @example
+ * wrapIfHasLength('', '(', ')') === ''
+ * wrapIfHasLength('1', '(', ')') === '(1)'
  */
 export function wrapIfHasLength(
   s: string | null | undefined,
@@ -234,6 +242,42 @@ export function wrapIfHasLength(
     return ''
   }
   return `${prefix}${s}${suffix}`
+}
+
+/**
+ * 如果数字不为0，那么将其包裹在指定前后缀中，否则返回固定文本
+ * @param n 数字
+ * @param prefix 前缀
+ * @param suffix 后缀
+ * @param zeroText 数字为0时返回的文本
+ * @returns
+ * @example
+ * wrapIfNotZero(0, '成功', '个', '未成功') === '未成功'
+ * wrapIfNotZero(1, '成功', '个', '未成功') === '成功1个'
+ * @since 2.3.0.230907
+ */
+export function wrapIfNotZero(
+  n: number,
+  prefix: string,
+  suffix: string,
+  zeroText: string
+) {
+  if (n === 0) {
+    return zeroText
+  }
+  return `${prefix}${n}${suffix}`
+}
+
+/**
+ * 给定字符串数组，如果元素有长度，则参与合并。
+ * @param ss 字符串数组
+ * @param separator 合并分隔符
+ * @returns
+ * @example joinIfHasLength(['a','','b'], ',') === 'a,b'
+ * @since 2.3.0.230907
+ */
+export function joinIfHasLength(ss: string[], separator: string) {
+  return ss.filter(v => hasLength(v)).join(separator)
 }
 
 // #endregion

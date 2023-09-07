@@ -73,6 +73,14 @@ isNumber - 数字
 
 字符串工具类，包含了 validate.js v1 所有方法
 
+### 2.3.0.230907
+
+ feat:
+
+- wrapIfNotZero 如果数字不为0，那么将其包裹在指定前后缀中，否则返回固定文本。
+
+- joinIfHasLength 给定字符串数组，如果元素有长度，则参与合并。
+
 ### 2.2.0.230907
 
 feat: wrapIfHasLength 将字符串包裹在指定前后缀中，如果为空字符串则不操作
