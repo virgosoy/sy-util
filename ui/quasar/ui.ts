@@ -2,6 +2,9 @@
  * UI 工具类，封装一些常用的 UI
  *
  * 依赖 quasar v2
+ *
+ * changelog
+ * - 2023-09-12 新增 tryCall 方法
  */
 
 import { Notify, Dialog } from 'quasar'
@@ -204,6 +207,158 @@ async function _tryDo<P extends unknown[], R>(
   }
 }
 
+// #region ------ tryCall 比 tryDo 增强了泛型异步函数的推断 ------
+
+/**
+ * 任意函数类型
+ * @since 2023-09-12
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FunctionType = (...params: any[]) => unknown
+
+/**
+ * 传入回调函数，返回增强的函数。\
+ * 调用返回的函数时，如果有错误则提示错误信息，然后继续抛出。如果成功则进行提示。
+ *
+ * 类似 {@link tryDo} ，但强化泛型函数的推断，并且有可能非异步（返回的函数与传入的函数签名相同，即传入非异步返回也是非异步）\
+ * 由于用法不同故新增了方法。
+ * @param callback 回调函数
+ * @returns 返回一个函数，对传入的函数进行增强，即加入了 UI 相关的 try-catch。
+ * @example
+ * ```ts
+    // type F = <T>(a: T) => T
+    function f<T>(a: T){ return a }
+    async function fa<T>(a: T){ return a }
+    function fn(a: number){ return a }
+
+    const r1 = tryCall(f)(1) // 1
+    const r2 = tryCall(f<number>)(1) // number
+    const r3 = tryCall(fn)(1) // number
+    const r4 = tryCall(fa)(1) // Promise<number>
+    const r5 = tryCall(Promise.all.bind(Promise))([1]) // Promise<[number]>
+    // 与 tryDo 对比的增强：
+    const rd1 = tryDo(f, 1) // tryDo 识别范围过大：Promise<number>
+    const rd5 = tryDo(Promise.all.bind(Promise), [1]) // tryDo 识别范围过大：Promise<unknown[] | []>
+ * ```
+ * @since 2023-09-12
+ */
+export function tryCall<F extends FunctionType>(callback: F): F
+
+/**
+ * 传入回调函数，返回增强的函数。\
+ * 调用返回的函数时，如果有错误则提示错误信息，然后继续抛出。如果成功则进行提示。
+ *
+ * 类似 {@link tryDo} ，但强化泛型函数的推断，并且有可能非异步（返回的函数与传入的函数签名相同，即传入非异步返回也是非异步）\
+ * 由于用法不同故新增了方法。
+ * @param successText 成功时显示文本，空字符串（falsy）时不会提示
+ * @param callback 回调函数
+ * @returns 返回一个函数，对传入的函数进行增强，即加入了 UI 相关的 try-catch。
+ * @example
+ * ```ts
+    // type F = <T>(a: T) => T
+    function f<T>(a: T){ return a }
+    async function fa<T>(a: T){ return a }
+    function fn(a: number){ return a }
+
+    const r1 = tryCall('success', f)(1) // 1
+    const r2 = tryCall('success', f<number>)(1) //number
+    const r3 = tryCall('success', fn)(1) // number
+    const r4 = tryCall('success', fa)(1) // Promise<number>
+    const r5 = tryCall('success', Promise.all.bind(Promise))([1]) // Promise<[number]>
+    // 与 tryDo 对比的增强：
+    const rd1 = tryDo('success', f, 1) // tryDo 识别范围过大：Promise<number>
+    const rd5 = tryDo('success', Promise.all.bind(Promise), [1]) // tryDo 识别范围过大：Promise<unknown[] | []>
+ * ```
+ * @since 2023-09-12
+ */
+export function tryCall<F extends FunctionType>(
+  successText: string,
+  callback: F
+): F
+// 参数判断
+export function tryCall<F extends FunctionType>(arg0: string | F, arg1?: F) {
+  if (typeof arg0 === 'string') {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return _tryCall(arg0, arg1!)
+  } else {
+    return _tryCall('', arg0)
+  }
+}
+// 全参数实现
+function _tryCall<F extends FunctionType>(successText: string, callback: F) {
+  return function<P extends Parameters<F>>(...params: P) {
+    try {
+      const result = callback(...params)
+      // 异步函数结果
+      if (result instanceof Promise) {
+        return result
+          .then(r => {
+            successText && UI.notifyOfSuccess(successText)
+            return r
+          })
+          .catch(e => {
+            UI.notifyOfError((e as Error).message)
+            return Promise.reject(e)
+          })
+      }
+      // 同步函数结果
+      successText && UI.notifyOfSuccess(successText)
+      return result
+    } catch (e) {
+      UI.notifyOfError((e as Error).message)
+      throw e
+    }
+  } as F
+}
+
+// 仅返回异步函数的实现
+// /**
+//  * 如果函数是异步函数，那么签名不变，如果是同步函数，那么返回类型会被 Promise 包住。\
+//  * 注：含有泛型的同步函数无法正确推断
+//  * @template F 函数类型
+//  */
+// type WrapAsyncReturn<F extends FunctionType> = (F extends (...params: unknown[]) => Promise<unknown> ? F : (F extends (...args: infer A) => infer R ? (...args: A) => Promise<R> : F))
+// /**
+//  * 类似 {@link tryDo} ，但强化泛型异步函数的推断（泛型同步函数依然无法正确推断）
+//  * 由于用法不同故新增了方法
+//  * @param successText 成功时显示文本，空字符串（falsy）时不会提示
+//  * @param callback 回调函数
+//  * @returns 返回一个函数，对传入的函数进行增强，即加入了 UI 相关的 try-catch。
+//  *    如果函数是异步函数，那么增强后签名不变，如果是同步函数，那么返回类型会被 Promise 包住。
+//  * @example
+//  * ```ts
+//     // 泛型函数的一些限制
+//     // type F = <T>(a: T) => T
+//     function f<T>(a: T){
+//       return a
+//     }
+//     async function fa<T>(a: T){
+//       return a
+//     }
+//     function fn(a: number){
+//       return a
+//     }
+//     const r1 = tryCall(f)(1) // unknown，无法正常推断
+//     const r2 = tryCall(f<number>)(1) // 正常 Promise<number>
+//     const r3 = tryCall(fn)(1) // 正常 Promise<number>
+//     const r4 = tryCall(fa)(1) // 正常 Promise<number>
+//  * ```
+//  */
+// function _tryCall<F extends FunctionType>(successText: string, callback: F) {
+//   return (async function<P extends Parameters<F>>(...params: P) {
+//     try {
+//       const result = await callback(...params)
+//       successText && UI.notifyOfSuccess(successText)
+//       return result
+//     } catch (e) {
+//       UI.notifyOfError((e as Error).message)
+//       throw e
+//     }
+//   }) as WrapAsyncReturn<F>
+// }
+
+// #endregion
+
 // #endregion
 
 const UI = {
@@ -214,5 +369,6 @@ const UI = {
   promptConfirm,
   doSomething,
   tryDo,
+  tryCall,
 }
 export default UI
