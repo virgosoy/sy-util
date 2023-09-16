@@ -269,8 +269,11 @@ UI 工具类，封装一些常用的 UI
 ```js
 await UI.doSomething(async () => await apiInvoke(param1, param2), '成功信息')
 await UI.doSomething(apiInvoke, [param1, param2], '成功信息')
+
+await UI.tryDo('成功信息', async () => await apiInvoke(param1, param2))
 await UI.tryDo('成功信息', apiInvoke, param1, param2)
 // 以下仅 quasar ui
+await UI.tryCall('成功信息', async () => await asyncInvoke(param1, param2))()
 await UI.tryCall('成功信息', asyncInvoke)(param1, param2)
 UI.tryCall('成功信息', syncInvoke)(param1, param2)
 ```
