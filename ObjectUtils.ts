@@ -167,6 +167,60 @@ export function comparatorAll<T>( ...confs: ([SortKeyOrFn<T>, Sort] | SortKeyOrF
   return (a, b) => params.reduce((r, param) => r || comparator(...param)(a,b),0)
 }
 
+// /**
+//  * 比较器
+//  *
+//  * @param keyOrMapFn 如果是函数fn(item)，回调函数的参数是比较的对象，回调函数对对象做处理。
+//  *      如果是key字符串，那么直接取比较对象的key对应值做比较
+//  * @param sort 可选，排序顺序，默认：asc-升序、desc-降序
+//  * @returns {function(*, *): number} 一个比较器，用于Array.prototype.sort()
+//  * @example
+//  * ```js
+//  * // 对arr[i].checkTime进行降序排序
+//  * arr.sort(comparator((item)=>new Date(item.checkTime),'desc'))
+//  * ```
+//  * @deprecated 非正式版，目前如果有数字字符串和其他字符串混合会导致排序不稳定。
+//  * 不稳定指的是含有相同元素不同顺序的列表，排序也会不同。
+//  */
+// export function comparator2<T>(
+//   keyOrMapFn: (keyof T) | ((item: T) => any) = v => v, 
+//   sort: Sort = 'asc',
+// ){
+//   const fn = typeof keyOrMapFn === 'function' ? keyOrMapFn : ((v: T) => v[keyOrMapFn])
+//   return (a: T, b: T) => {
+//     let av = fn(a), bv = fn(b)
+//     let result: number
+//     if((typeof av === 'bigint' && typeof bv === 'bigint') ||
+//         (typeof av === 'number' && typeof bv === 'number')){
+//       // @ts-ignore
+//       result = av - bv
+//     }else if((typeof av === 'bigint' && typeof bv === 'number') ||
+//         (typeof av === 'number' && typeof bv === 'bigint')){
+//       // @ts-ignore
+//       result = Number(BigInt(av) - BigInt(bv))
+//     }else if(typeof av === 'bigint' || typeof av === 'number'){
+//       result = -1
+//     }else if(typeof bv === 'bigint' || typeof bv === 'number'){
+//       result = 1
+//     }else{
+//       result =  String(av ?? '').localeCompare(bv ?? '')
+//     }
+//     return result * (sort === 'asc' ? 1 : -1)
+//   }
+// }
+// export function comparator2<T>(
+//   keyOrMapFn: (keyof T) | ((item: T) => any) = v => v, 
+//   sort: Sort = 'asc',
+// ){
+//   const fn = typeof keyOrMapFn === 'function' ? keyOrMapFn : ((v: T) => v[keyOrMapFn])
+//   return (a: T, b: T) => {
+//     const av = fn(a), bv = fn(b)
+//     const result = av - bv
+//     return (isNaN(result) ? av.localeCompare(bv) : result) * (sort === 'asc' ? 1 : -1)
+//   }
+// }
+
+
 /**
  * 比较获取目标数组比原数组多的元素
  * @param source 原数组
