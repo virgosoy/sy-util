@@ -392,3 +392,10 @@ FieldNotNull - 将指定字段设置为非空
 
 创建可共享的可组合项
 
+
+
+## Nuxt 系列
+
+### useSseServer.ts / useSseClient.ts
+
+方便客户端和服务端使用 Server-Send Events（SSE）
