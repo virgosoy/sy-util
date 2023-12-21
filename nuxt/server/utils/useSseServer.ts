@@ -3,9 +3,16 @@ import { type ServerResponse, type IncomingMessage } from 'http';
 /**
  * Service-Send Events（SSE）服务端组合式工具
  * @since 2023-12-19
- * @version 2023-12-19
+ * @version 2023-12-21 修改useSseServer函数参数为对象形式
+ * @changeLog
+ *        2023-12-21 修改useSseServer函数参数为对象形式
+ *        2023-12-19 初始版本
+ * @example
+ * ```ts
+ * const sse = useSseServer(event.node)
+ * ```
  */
-export function useSseServer<T extends IncomingMessage>(req: IncomingMessage, res: ServerResponse<T>) {
+export function useSseServer<T extends IncomingMessage>({req, res}: {req: IncomingMessage, res: ServerResponse<T>}) {
   const closeHandlerList: (() => void)[] = [];
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
