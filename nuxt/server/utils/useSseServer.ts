@@ -3,9 +3,9 @@ import { type ServerResponse, type IncomingMessage } from 'http';
 /**
  * Service-Send Events（SSE）服务端组合式工具
  * @since 2023-12-19
- * @version 2023-12-21 修改useSseServer函数参数为对象形式
+ * @version 2023-12-21 修改useSseServer函数参数为对象形式，修改方法名
  * @changeLog
- *        2023-12-21 修改useSseServer函数参数为对象形式
+ *        2023-12-21 修改useSseServer函数参数为对象形式，修改方法名
  *        2023-12-19 初始版本
  * @example
  * ```ts
@@ -32,10 +32,10 @@ export function useSseServer<T extends IncomingMessage>({req, res}: {req: Incomi
       closeHandlerList.push(closeHandler);
     },
     /**
-     * 写数据
+     * 发送数据
      * @param data
      */
-    write(data: string) {
+    send(data: string) {
       res.write(`data: ${data}\n\n`);
     },
     /**
