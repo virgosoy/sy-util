@@ -6,9 +6,9 @@ import { fetchEventSource } from '@microsoft/fetch-event-source'
 /**
  * Service-Send Events（SSE）客户端组合式工具
  * @since 2023-12-19
- * @version 2023-12-22 为onReceive函数增加泛型支持，替换EventSource实现为fetchEventSource并支持泛型
+ * @version 2023-12-22 为onReceive函数增加泛型支持，替换EventSource实现为fetchEventSource并支持泛型，fix: 请求头有误
  * @changeLog
- *        2023-12-22 为onReceive函数增加泛型支持，替换EventSource实现为fetchEventSource并支持泛型
+ *        2023-12-22 为onReceive函数增加泛型支持，替换EventSource实现为fetchEventSource并支持泛型，fix: 请求头有误
  *        2023-12-19 初始版本
  */
 export function useSseClient<Res, Req = any>(url: NitroFetchRequest, opt?: {method?: 'GET' | 'POST' | 'get' | 'post', body?: Req}){
@@ -17,6 +17,9 @@ export function useSseClient<Res, Req = any>(url: NitroFetchRequest, opt?: {meth
   const ctrl = new AbortController();
   fetchEventSource(url, {
     method: opt?.method,
+    headers: {
+        'Content-Type': 'application/json',
+    },
     body: opt?.body === undefined ? undefined : JSON.stringify(opt.body),
     signal: ctrl.signal,
     onmessage(event) {
