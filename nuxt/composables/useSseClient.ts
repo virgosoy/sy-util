@@ -5,7 +5,10 @@ import { tryOnScopeDispose } from '@vueuse/core'
 /**
  * Service-Send Events（SSE）客户端组合式工具
  * @since 2023-12-19
- * @version 2023-12-19
+ * @version 2023-12-22 为onReceive函数增加泛型支持
+ * @changeLog
+ *        2023-12-22 为onReceive函数增加泛型支持
+ *        2023-12-19 初始版本
  */
 export function useSseClient(url: NitroFetchRequest){
   const receiveHandlerList: ((data: unknown) => void)[] = []
@@ -31,7 +34,7 @@ export function useSseClient(url: NitroFetchRequest){
      * 接收消息回调
      * @param receiveHandler 
      */
-    onReceive(receiveHandler: (data: unknown) => void){
+    onReceive<T>(receiveHandler: (data: T) => void){
       receiveHandlerList.push(receiveHandler)
     },
     /**
