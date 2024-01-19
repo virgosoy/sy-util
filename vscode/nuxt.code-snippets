@@ -1,0 +1,57 @@
+{
+  "api-example": {
+    "scope": "typescript",
+    "prefix": ["apiExample", "exportApi", "export default defineEventHandler("],
+    "body": [
+      "export default defineEventHandler((event) => {",
+      "  return {",
+      "    api: 'works'",
+      "  }",
+      "})",
+    ],
+    "description": "api 导出例子"
+  },
+  "api-async-example": {
+    "scope": "typescript",
+    "prefix": ["apiAsyncExample", "exportApiAsync", "export default defineEventHandler(async ("],
+    "body": [
+      "export default defineEventHandler(async (event) => {",
+      "  // 请求体",
+      "  const body = await readBody<${1:MyReq}>(event)",
+      "  // 路由参数",
+      "  const ${2:id} = event.context.params.$2",
+      "  // 查询参数",
+      "  const query = getQuery(event)",
+      "  const ${2:id} = query.$2",
+      "  $0",
+      "  return {",
+      "    api: 'works'",
+      "  }",
+      "})",
+    ],
+    "description": "api 异步导出例子"
+  },
+  "api-valid-route-param-int": {
+    "scope": "typescript",
+    "prefix": ["apiVaildRouteParamInt", "parseInt(event.context.params."],
+    "body": [
+      "const ${1:rowid} = parseInt(event.context.params?.$1 ?? '')",
+      "if(!Number.isInteger($1)){",
+      "  $2",
+      "}",
+      "$0",
+    ],
+    "description": "api 校验路由参数为 int 类型"
+  },
+  "api-createError": {
+    "scope": "typescript",
+    "prefix": ["apiError","throw createError("],
+    "body": [
+      "throw createError({",
+      "  statusCode: 400,",
+      "  statusMessage: 'ID should be an integer',",
+      "})",
+    ],
+    "description": "api 创建错误例子，用返回自定义错误状态"
+  },
+}

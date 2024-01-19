@@ -399,3 +399,21 @@ FieldNotNull - 将指定字段设置为非空
 ### useSseServer.ts / useSseClient.ts
 
 方便客户端和服务端使用 Server-Send Events（SSE）
+
+
+
+## VSCode 系列
+
+是一些相关的配置，而非代码
+
+代码片段：
+
+* nuxt.code-snippets
+* vue.code-snippets
+
+
+
+
+
+
+
