@@ -214,9 +214,17 @@ includes - 柯里化Array#includes
 
 Promise 工具类
 
+### 当前版本：0.2.0.230713
+
+### 所有方法
+
 主要是处理多个 Promise 的组合调用
 
 * queue - 队列，按顺序执行 promise
+
+一些工具方法：
+
+- sleep - 一段时间后返回 resolve
 
 
 
