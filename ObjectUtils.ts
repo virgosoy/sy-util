@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.14.0.230906 feat: omit: 忽略对象指定 keys，返回一个新对象；并修正一些ts检查
+ * @version 2.15.0.240219 feat: deleteUndefinedValue：删除对象中值为 undefined 的字段
  * @changeLog
+ *          2.15.0.240219 feat: deleteUndefinedValue：删除对象中值为 undefined 的字段
  *          2.14.0.230906 feat: omit: 忽略对象指定 keys，返回一个新对象；并修正一些ts检查
  *          2.13.0.230710 feat: pick: 过滤对象指定 keys，返回一个新对象
  *          2.12.0.230706 feat: 新增 WeakMap 的 5 个工具方法 mapGetOrSetIfAbsent、mapCompute、mapComputeIfAbsent、mapComputeIfPresent、mapMerge
@@ -472,6 +473,16 @@ export function pick<O extends Record<string | number | symbol, unknown>, KS ext
  * @param keys 需要忽略的 key 数组
  * @returns 一个新的对象，不会修改原对象。浅克隆。
  * @since 2.14.0.230906
+ * @example
+ * ```ts
+ * // 也可以通过解构赋值来处理，demo：
+ * function omitKey(obj, keyToOmit) {
+ *   // 使用解构赋值从对象中剔除指定的key
+ *   const { [keyToOmit]: omitted, ...rest } = obj;
+ *   // 返回剩余的对象，它不包含被忽略的键
+ *   return rest;
+ * }
+ * ```
  */
 export function omit<
   O extends Record<string | number | symbol, unknown>,
@@ -480,6 +491,28 @@ export function omit<
   return Object.fromEntries(
     Object.entries(obj).filter(([k]) => !keys.includes(k))
   ) as Omit<O, KS[number]>
+}
+
+/**
+ * 删除对象中值为 undefined 的字段 \
+ * 主要是用于展开语法或 Object.assign 复制/合并对象时不会被 undefined 覆盖。
+ * ```ts
+ * const newObj = {...defaultObj, ...obj}
+ * // 上面情况如果 obj 有字段值为 undefined 则 newObj 对应字段值也为 undefined，即会被覆盖。
+ * // 使用此方法可以解决。
+ * const newObj = {...defaultObj, ...deleteUndefinedValue(obj)}
+ * ```
+ * 其实实际业务中很少有这种情况，后端 java 会出现比较多。
+ * 也可以考虑使用其他默认值合并库，如 defu
+ * @param obj 
+ * @returns 一个新的对象，不会修改原对象。浅克隆。
+ * @since 2.15.0.240219
+ * @description 注：ts 中如果字段为可选，那么类型就包含了 undefined，如 `var v = {a?:number}` IDE会显示为 `var v = {a?:number | undefined}`
+ */
+export function deleteUndefinedValue<
+  O extends Record<string | number | symbol, unknown>
+>(obj: O) {
+  return Object.fromEntries(Object.entries(obj).filter(([k, v]) => v !== undefined)) as O
 }
 
 // #endregion

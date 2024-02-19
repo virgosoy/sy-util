@@ -294,6 +294,10 @@ UI.tryCall('成功信息', syncInvoke)(param1, param2)
 
 []、{}、any 类型 工具类
 
+### 2.15.0.240219
+
+feat(ObjectUtils): 2.15.0.240219 deleteUndefinedValue：删除对象中值为 undefined 的字段
+
 ### 2.14.0.230906
 
 feat(ObjectUtils): 2.14.0.230906 feat: omit: 忽略对象指定 keys，返回一个新对象；并修正一些ts检查
