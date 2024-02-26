@@ -214,13 +214,14 @@ includes - 柯里化Array#includes
 
 Promise 工具类
 
-### 当前版本：0.2.0.230713
+### 当前版本：0.3.0.240226
 
 ### 所有方法
 
 主要是处理多个 Promise 的组合调用
 
 * queue - 队列，按顺序执行 promise
+* 异步 map 系列方法：asyncMap、asyncSequentialMap、asyncParallelMap - 对数组执行异步的 map，其中 asyncMap 加参数是 asyncSequentialMap、asyncParallelMap 的别名。asyncSequentialMap 功能等同于 queue，只是后者回调函数的参数少。
 
 一些工具方法：
 
