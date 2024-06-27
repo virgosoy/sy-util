@@ -1,7 +1,8 @@
 /**
  * []、{}、any 类型 工具类
- * @version 2.15.0.240219 feat: deleteUndefinedValue：删除对象中值为 undefined 的字段
+ * @version 2.16.0.240627 feat: comparatorOfEnum：比较器，按指定的枚举顺序排序
  * @changeLog
+ *          2.16.0.240627 feat: comparatorOfEnum：比较器，按指定的枚举顺序排序
  *          2.15.0.240219 feat: deleteUndefinedValue：删除对象中值为 undefined 的字段
  *          2.14.0.230906 feat: omit: 忽略对象指定 keys，返回一个新对象；并修正一些ts检查
  *          2.13.0.230710 feat: pick: 过滤对象指定 keys，返回一个新对象
@@ -104,7 +105,7 @@ export function mapdistinct<T>(
 }
 
 /**
- * 排序 key 或函数
+ * 排序 key 或函数，函数返回的是进行比较的数字
  */
 type SortKeyOrFn<T> = ((item: T) => number) | keyof T
 /**
@@ -143,6 +144,85 @@ export function comparator<T>(keyOrFn: SortKeyOrFn<T>, sort: Sort = 'asc'): (a: 
     }
   }
 }
+
+
+/**
+ * 排序 key 或函数，函数返回的是要比较的枚举内容
+ */
+type SortKeyOrFnOfEnum<T> = 
+  _SortFnOfEnum<T> | _KeyOfEnumValue<T>
+/** 枚举父类型 */
+type _EnumType = string | number
+/** 排序函数 */
+type _SortFnOfEnum<T> = (item: T) => _EnumType
+/** 枚举值类型的 key */
+type _KeyOfEnumValue<T> = keyof {
+  [K in keyof T as T[K] extends _EnumType ? K : never]: any
+}
+
+/**
+ * 比较器，按指定的枚举顺序排序
+ * @param keyOrFn 
+ * * 如果是函数fn(item)，回调函数的参数是比较的对象，返回值是枚举值，回调函数对对象做处理。
+ * * 如果是key字符串，那么直接取比较对象的key对应值（即枚举值）做比较
+ * @param enumSort
+ * @param [sort='asc'] 可选，升序（默认）/降序
+ * @template T 数组的元素类型
+ * @template KOF keyOrFn 类型
+ * @example
+ * ```ts
+ * arr.sort(
+ *   // 对 arr[].type 按枚举 ['a','b'] 进行降序排序
+ *   comparatorOfEnum(item => item.type, ['a','b'], 'desc')
+ * )
+ * ```
+ * @version 2.16.0.240627
+ * @since 2.16.0.240627
+ */
+export function comparatorOfEnum<
+  T, 
+  KOF extends SortKeyOrFnOfEnum<T>, 
+  // E extends (
+  //   KOF extends (...args: any) => infer R ? R : 
+  //   KOF extends keyof T ? T[KOF] : never
+  // )
+>(
+  keyOrFn: KOF,
+  enumSort: (
+    KOF extends (...args: any) => infer R ? R : 
+    KOF extends keyof T ? T[KOF] : never
+  )[], 
+  sort: Sort = 'asc'
+): (a: T, b: T) => number {
+  const enumMap: {[k in _EnumType/*super*/]: number} = Object.fromEntries(enumSort.map((v,i) => [v,i]))
+  if (typeof (keyOrFn) === 'function') {
+    const fn: _SortFnOfEnum<T> = keyOrFn
+    if (sort === 'asc') {
+      return (a, b) => enumMap[fn(a)] - enumMap[fn(b)]
+    } else {
+      return (a, b) => enumMap[fn(b)] - enumMap[fn(a)]
+    }
+  } else {
+    const key = keyOrFn as _KeyOfEnumValue<T>
+    if (sort === 'asc') {
+      return (a, b) => enumMap[<_EnumType> a[key]] - enumMap[<_EnumType> b[key]]
+    } else {
+      return (a, b) => enumMap[<_EnumType> b[key]] - enumMap[<_EnumType> a[key]]
+    }
+  }
+}
+
+// 测试：
+// const a: Array<{
+//   a: '1'|'2',
+//   b: number,
+//   c: any
+// }> = [{a:'1',b:1,c: {}}, {a:'2',b:3,c:{}}]
+// a.toSorted(
+//   comparatorOfEnum('a', ['1', '2']))
+// a.toSorted(
+//   comparatorOfEnum(v=> v.a, ['2','1','1']))
+
 
 /**
  * 比较器，可以对多个字段进行排序
@@ -467,6 +547,17 @@ export function pick<O extends Record<string | number | symbol, unknown>, KS ext
   return Object.fromEntries(Object.entries(obj).filter(([k]) => keys.includes(k))) as Pick<O, KS[number]>
 }
 
+/*
+// 其他方式
+function omit<T extends object, K extends keyof T>(obj: T, keysToOmit: K[]): Omit<T, K> {
+  return Object.keys(obj).reduce((acc, key) => {
+    if (!keysToOmit.includes(key as K)) {
+      acc[key as keyof typeof acc] = obj[key as keyof T];
+    }
+    return acc;
+  }, {} as Omit<T, K>);
+}
+*/
 /**
  * 忽略对象指定 keys，返回一个新对象
  * @param obj -

@@ -295,6 +295,10 @@ UI.tryCall('成功信息', syncInvoke)(param1, param2)
 
 []、{}、any 类型 工具类
 
+### 2.16.0.240627
+
+feat(ObjectUtils): 2.16.0.240627 comparatorOfEnum：比较器，按指定的枚举顺序排序
+
 ### 2.15.0.240219
 
 feat(ObjectUtils): 2.15.0.240219 deleteUndefinedValue：删除对象中值为 undefined 的字段
