@@ -6,13 +6,15 @@ import { fetchEventSource } from '@microsoft/fetch-event-source'
 /**
  * Service-Send Events（SSE）客户端组合式工具
  * @since 2023-12-19
- * @version 2023-12-22 为onReceive函数增加泛型支持，替换EventSource实现为fetchEventSource并支持泛型，fix: 请求头有误
+ * @version 2023-12-28 添加服务端关闭处理函数
  * @changeLog
+ *        2023-12-28 添加服务端关闭处理函数
  *        2023-12-22 为onReceive函数增加泛型支持，替换EventSource实现为fetchEventSource并支持泛型，fix: 请求头有误
  *        2023-12-19 初始版本
  */
 export function useSseClient<Res, Req = any>(url: NitroFetchRequest, opt?: {method?: 'GET' | 'POST' | 'get' | 'post', body?: Req}){
   const receiveHandlerList: ((data: Res) => void)[] = []
+  const closeHandlerList: (() => void)[] = []
 
   const ctrl = new AbortController();
   fetchEventSource(url, {
@@ -32,6 +34,9 @@ export function useSseClient<Res, Req = any>(url: NitroFetchRequest, opt?: {meth
       const data = safeDestr<Res>(event.data)
       receiveHandlerList.map(f => f(data))
     },
+    onclose(){
+      closeHandlerList.map(f => f())
+    },
     onerror(error) {
       // console.error('EventSource failed:', error)
       throw error;
@@ -50,9 +55,16 @@ export function useSseClient<Res, Req = any>(url: NitroFetchRequest, opt?: {meth
     },
     /**
      * 客户端关闭 SSE 连接
+     * 注意：由于中断需要时间，不是立即中断的，故中断后还可能会接收到消息。
      */
     close(){
       ctrl.abort()
-    }
+    },
+    /**
+     * 服务端关闭
+     */
+    onClose(closeHandler: () => void){
+      closeHandlerList.push(closeHandler)
+    },
   }
 }
