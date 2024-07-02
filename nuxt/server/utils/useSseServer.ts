@@ -3,13 +3,16 @@ import { type ServerResponse, type IncomingMessage } from 'http';
 /**
  * Service-Send Events（SSE）服务端组合式工具
  * @since 2023-12-19
- * @version 2023-12-21 修改useSseServer函数参数为对象形式，修改方法名
+ * @version 2024-07-02 重载 send 和 close 方法，可自定义事件
  * @changeLog
+ *        2024-07-02 重载 send 和 close 方法，可自定义事件
  *        2023-12-21 修改useSseServer函数参数为对象形式，修改方法名
  *        2023-12-19 初始版本
  * @example
  * ```ts
  * const sse = useSseServer(event.node)
+ * sse.send('mydata') // 一般多次调用
+ * sse.close()
  * ```
  */
 export function useSseServer<T extends IncomingMessage>({req, res}: {req: IncomingMessage, res: ServerResponse<T>}) {
@@ -23,6 +26,59 @@ export function useSseServer<T extends IncomingMessage>({req, res}: {req: Incomi
     console.log('Client closed the connection');
     closeHandlerList.map(f => f());
   });
+
+  /**
+   * 发送数据
+   * @param event
+   * @param data
+   */
+  function send(event: string, data: string): void
+  /**
+   * 发送数据
+   * @param data
+   */
+  function send(data: string): void
+  /**
+   * 发送数据
+   * @param param0.event event
+   * @param param0.data data
+   */
+  function send({event, data}: {event?: string, data: string}): void
+  function send(arg1: string | {event?: string, data: string}, arg2?: string) {
+    if(typeof arg2 === 'undefined'){
+      if(typeof arg1 === 'string'){
+        const data = arg1
+        _w({data})
+      }else{
+        const {event, data} = arg1
+        _w({event, data})
+      }
+    }else{
+      const [event, data] = [arg1 as string, arg2]
+      _w({event, data})
+    }
+  }
+
+  /**
+   * 如果字符串是 undefined，则返回空字符串，否则返回第二个参数。
+   * 懒得用回调函数了
+   */
+  function _s(str: string | undefined, strOut: string){
+    if(typeof str === 'undefined'){
+      return ''
+    }
+    return strOut
+  }
+
+  /**
+   * 写入响应消息
+   * @param param0.event
+   * @param param0.data
+   */
+  function _w({event, data}: {event?: string, data?: string}){
+    res.write(`${_s(event, `event: ${event}\n`)}${_s(data, `data: ${data}\n`)}\n`);
+  }
+
   return {
     /**
      * 客户端关闭回调
@@ -31,19 +87,13 @@ export function useSseServer<T extends IncomingMessage>({req, res}: {req: Incomi
     onClose(closeHandler: () => void) {
       closeHandlerList.push(closeHandler);
     },
-    /**
-     * 发送数据
-     * @param data
-     */
-    send(data: string) {
-      res.write(`data: ${data}\n\n`);
-    },
+    send,
     /**
      * 服务端关闭
      */
-    close() {
+    close({event, data}: {event?: string, data?: string} = {event: 'close', data: 'Server will close the connection ...'}) {
       console.log('Close server connection');
-      res.write('event: close\ndata: Server will close the connection ...\n\n');
+      _w({event, data})
       res.end();
     },
   };
