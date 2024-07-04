@@ -70,10 +70,9 @@ type _Convert<T> = {
  * )
  * ```
  * @since 2023-12-19
- * @version 2024-07-03 ⚡onReceive 参数修改成对象，可读取 event。自定义关闭事件。初始化时可传递回调函数。
- *                     ⚡泛型修改成对应事件的数据类型
- *                     ⚡去掉事件会触发客户端关闭
+ * @version 2024-07-04 fix: 浏览器最小化时中断请求
  * @changeLog
+ *          2024-07-04 fix: 浏览器最小化时中断请求
  *          2024-07-03 ⚡onReceive 参数修改成对象，可读取 event。自定义关闭事件。初始化时可传递回调函数。
  *                     ⚡泛型修改成对应事件的数据类型
  *                     ⚡去掉事件会触发客户端关闭
@@ -107,6 +106,7 @@ export function useSseClient<
     },
     body: opt?.body === undefined ? undefined : JSON.stringify(opt.body),
     signal: ctrl.signal,
+    openWhenHidden: true,
     onmessage(event) {
       console.debug(`[useSseClient]: fetchEventSource onmessage\nevent: ${event.event}\ndata: ${event.data}`)
       // 如果响应没有 data（标准是不能没有的，但实际可以没有），那么这里会是 空字符串，如果 safeDestr('') 会报错，故返回 undefined
