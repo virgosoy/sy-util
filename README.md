@@ -385,6 +385,12 @@ TS 类型工具类
 
 所有的函数均不对数据做实际处理，只会处理类型
 
+### 0.4.0.240710
+
+feat(TsTypeUtils): 新增：Prettify - 提高类型的可读性；FieldPartial - 将指定字段设置为可选
+
+更新：FieldNotNull - 也使用 Prettify，逻辑不变。
+
 ### 0.3.0.230705
 
 feat(TsTypeUtils): DiscriminatedValueType：根据对象的原 key 和 value，获取目标 key 的 value 类型。

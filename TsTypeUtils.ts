@@ -2,8 +2,11 @@
  * TS 类型工具类
  * 
  * 所有的函数均不对数据做实际处理，只会处理类型
- * @version 0.3.0.230705 feat(TsTypeUtils): DiscriminatedValueType：根据对象的原 key 和 value，获取目标 key 的 value 类型。
+ * @version 0.4.0.240710 feat(TsTypeUtils): 新增：Prettify - 提高类型的可读性；FieldPartial - 将指定字段设置为可选
+ *                       更新：FieldNotNull - 也使用 Prettify，逻辑不变。
  * @changeLog
+ *          0.4.0.240710 feat(TsTypeUtils): 新增：Prettify - 提高类型的可读性；FieldPartial - 将指定字段设置为可选
+ *                       更新：FieldNotNull - 也使用 Prettify，逻辑不变。
  *          0.3.0.230705 feat(TsTypeUtils): DiscriminatedValueType：根据对象的原 key 和 value，获取目标 key 的 value 类型。
  *          0.2.0.230704 ReplaceKey：替换对象的 key
  *          0.1.0.230424
@@ -95,6 +98,22 @@ type MaybeFieldType<T, F extends keyof(T), E extends T[F]> = T | {
 }
 
 /**
+ * 提高类型的可读性
+ * 
+ * https://github.com/vuejs/core/commit/4c9bfd2b999ce472f7481aae4f9dc5bb9f76628e#diff-5c7c6077892111616bcd760121ec27f7b4e5e059ef68c9232e24bbc19a5706b9
+ * ← 来源：（dx：提高道具显示类型的可读性（4c9bfd2））https://github.com/vuejs/core/blob/main/CHANGELOG.md#330-alpha5-2023-03-26
+ * @since 0.4.0.240710
+ * @version 0.4.0.240710
+ * @example
+ * ```ts
+ * type A = {a: string} & {b ?: number} 
+ * type B = Prettify<A>
+ *   // ^? {a: string, b ?: number | undefined}
+ * ```
+ */
+export type Prettify<T> = { [K in keyof T]: T[K] } & {}
+
+/**
  * 将指定字段设置为非空
  * @example
  * type A = {
@@ -108,12 +127,13 @@ type MaybeFieldType<T, F extends keyof(T), E extends T[F]> = T | {
  *   b: null
  * }
  * @since 0.1.0.230424
+ * @version 0.4.0.240710
  */
-export type FieldNotNull<T, F extends keyof(T)> = {
+export type FieldNotNull<T, F extends keyof(T)> = Prettify<{
   [P in F] : Exclude<T[P], null>
 } & {
   [P in Exclude<keyof T, F>]: T[P]
-}
+}>
 
 /**
  * 将表格中指定字段设置为非空（柯里化函数），不对数据处理
@@ -126,6 +146,26 @@ export function tableFieldNotNullCurry<T>(table: T[]){
     return table as FieldNotNull<T, F>[]
   }
 }
+
+/**
+ * 将指定字段设置为可选
+ * @since 0.4.0.240710
+ * @version 0.4.0.240710
+ * @example
+ * ```ts
+ * type A = {
+ *   a: string,
+ *   b: number
+ * }
+ * type B = FieldPartial<A, 'a'>
+ *   // ^? 约等于 { a?: string | undefined, b: number}
+ * ```
+ */
+export type FieldPartial<T, F extends keyof(T)> = Prettify<{
+  [P in F]?: T[P];
+} & {
+  [P in Exclude<keyof T, F>]: T[P]
+}>
 
 /**
  * 替换对象的 key
