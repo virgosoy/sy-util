@@ -2,9 +2,9 @@
  * TS 类型工具类
  * 
  * 所有的函数均不对数据做实际处理，只会处理类型
- * @version 0.4.0.240710 feat(TsTypeUtils): 新增：Prettify - 提高类型的可读性；FieldPartial - 将指定字段设置为可选
- *                       更新：FieldNotNull - 也使用 Prettify，逻辑不变。
+ * @version 0.5.0.240711 feat(TsTypeUtils): 新增：UnionToTuple - 联合类型转元组类型
  * @changeLog
+ *          0.5.0.240711 feat(TsTypeUtils): 新增：UnionToTuple - 联合类型转元组类型
  *          0.4.0.240710 feat(TsTypeUtils): 新增：Prettify - 提高类型的可读性；FieldPartial - 将指定字段设置为可选
  *                       更新：FieldNotNull - 也使用 Prettify，逻辑不变。
  *          0.3.0.230705 feat(TsTypeUtils): DiscriminatedValueType：根据对象的原 key 和 value，获取目标 key 的 value 类型。
@@ -199,3 +199,26 @@ export type ReplaceKey<T extends {}, From extends string, To extends string> =
  */
 export type DiscriminatedValueType<O extends object, SK extends keyof O, TK extends keyof O, TV extends O[SK], _U extends O = O> =
     _U extends O ? TV extends _U[SK] ? _U[TK] : never : never
+
+// --- 联合类型转元组类型 ---
+
+type UnionToIntersection<U> = 
+(U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+
+type LastOfUnion<U> = 
+UnionToIntersection<U extends any ? (x: U) => 0 : never> extends ((x: infer L) => 0) ? L : never
+
+/**
+ * 联合类型转元组类型
+ * （如果全是字符串类型，元组的顺序和联合类型的顺序一致，有其他类型的话可能会不一致）
+ * @version 0.5.0.240711
+ * @since 0.5.0.240711
+ * @example
+ * ```ts
+ * type A = UnionToTuple<'a' | 'b' | 'c'> // ['a', 'b', 'c']
+ * ```
+ */
+export type UnionToTuple<U, T extends any[] = []> = 
+[U] extends [never] ? T : UnionToTuple<Exclude<U, LastOfUnion<U>>, [LastOfUnion<U>, ...T]>
+
+// ------

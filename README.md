@@ -385,6 +385,10 @@ TS 类型工具类
 
 所有的函数均不对数据做实际处理，只会处理类型
 
+### 0.5.0.240711
+
+feat(TsTypeUtils): 新增：UnionToTuple - 联合类型转元组类型
+
 ### 0.4.0.240710
 
 feat(TsTypeUtils): 新增：Prettify - 提高类型的可读性；FieldPartial - 将指定字段设置为可选
